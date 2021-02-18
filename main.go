@@ -16,7 +16,8 @@ var (
 )
 
 const (
-	prefix = "-"
+	prefix = "&"
+	ver    = "Alphabot | [Insert version number here when theres something worth versioning]"
 )
 
 func init() {
@@ -69,7 +70,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == prefix+"hi" {
 		s.ChannelMessageSend(m.ChannelID, "Why hello there! Im Alphabot!")
 		s.ChannelMessageSend(m.ChannelID, "You can take a peek at my development over at \n github.com/ampersanddevs/alphabot")
-
+	}
+	if m.Content == prefix+"ver" {
+		s.ChannelMessageSend(m.ChannelID, ver)
 	}
 
 }
