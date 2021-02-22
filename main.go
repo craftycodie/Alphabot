@@ -1,35 +1,36 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 )
 
 // Variables used for command line parameters
 var (
-	Token string
+	token string
+	guild string
 )
 
 const (
 	prefix = "&"
-	ver    = "Alphabot | [Insert version number here when theres something worth versioning]"
+	ver    = "Alphabot | 0.0.1"
 )
 
 func init() {
-
-	flag.StringVar(&Token, "t", "", "Bot Token")
-	flag.Parse()
+	godotenv.Load()
+	token = os.Getenv("DISCORD_BOT_TOKEN")
+	guild = os.Getenv("DISCORD_BOT_GUILD")
 }
 
 func main() {
 
 	// Create a new Discord session using the provided bot token.
-	discord, err := discordgo.New("Bot " + Token)
+	discord, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
@@ -60,6 +61,10 @@ func main() {
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the authenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Only listen to the provided guild.
+	if m.GuildID != guild {
+		return
+	} 
 
 	// Ignore all messages created by the bot itself
 	// This isn't required in this specific example but it's a good practice.
