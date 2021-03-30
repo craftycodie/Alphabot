@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const fetch = require('node-fetch')
+// const fetch = require('node-fetch')
 
 const Twit = require('twit');
 const T = new Twit({
@@ -52,8 +52,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
 	console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
 
     if (reaction.emoji.name == approveEmoji) {
-        twitterUrl = new URL(reaction.message.content.substr(reaction.message.content.lastIndexOf("\n") + 1))
-        tweetId = twitterUrl.pathname.substr(twitterUrl.pathname.lastIndexOf("/") + 1)
+        var twitterUrl = new URL(reaction.message.content.substr(reaction.message.content.lastIndexOf("\n") + 1))
+        var tweetId = twitterUrl.pathname.substr(twitterUrl.pathname.lastIndexOf("/") + 1)
         console.log(tweetId)
         T.post('statuses/retweet/:id', {id: tweetId}, () => {
             console.log("done")
@@ -101,7 +101,7 @@ client.on('message', (msg) => {
         if (msg.content[4] != "h") {
             T.get("statuses/user_timeline", {"screen_name": msg.content.substring(4)})
                 .then(data => {
-                    url = new URL(`https://twitter.com/${msg.content.substring(4)}/status/${data.data[0].id_str}`);
+                    var url = new URL(`https://twitter.com/${msg.content.substring(4)}/status/${data.data[0].id_str}`);
                     client.users.cache.get(codieID).send(`Retweet requested by ${msg.member.user.username}#${msg.member.user.discriminator}\n${url}`)
                     .then(message => {
                         message.react(approveEmoji)
