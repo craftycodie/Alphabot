@@ -1,4 +1,15 @@
+import events from "./events"
+import "./modules/DebugModule"
+import DebugModule from "./modules/DebugModule";
 require('dotenv').config()
+
+const modules = [
+    new DebugModule()
+]
+
+modules.forEach(module => {
+    module.registerCommands()
+});
 
 // const fetch = require('node-fetch')
 
@@ -93,32 +104,37 @@ client.on('messageReactionAdd', async (reaction, user) => {
 });
 
 client.on('message', (msg) => {
-  if (msg.content.startsWith("&rt ")) {
-    if (msg.member.roles.cache.has(trustedID) || msg.member.id == codieID) {
-        // twitterUrl = new URL(msg.content.substr(4))
-        // console.log(twitterUrl)
-
-        if (msg.content[4] != "h") {
-            T.get("statuses/user_timeline", {"screen_name": msg.content.substring(4)})
-                .then(data => {
-                    var url = new URL(`https://twitter.com/${msg.content.substring(4)}/status/${data.data[0].id_str}`);
-                    client.users.cache.get(codieID).send(`Retweet requested by ${msg.member.user.username}#${msg.member.user.discriminator}\n${url}`)
-                    .then(message => {
-                        message.react(approveEmoji)
-                        message.react(rejectEmoji)
-                        // message.pin()
-                    });
-                })
-        } else {
-            client.users.cache.get(codieID).send(`Retweet requested by ${msg.member.user.username}#${msg.member.user.discriminator}\n${new URL(msg.content.substr(4))}`)
-            .then(message => {
-                message.react(approveEmoji)
-                message.react(rejectEmoji)
-                // message.pin()
-            });
-        }
-    } else {
-        msg.channel.send("You must be trusted to use this command.")
+    if(msg.content.startsWith("&")) {
+        var split = msg.content.substr(1).split()
+        events.emitCommand(msg, split[0], split.length > 1 ? split.slice(1) : []);
     }
-  }
+
+//   if (msg.content.startsWith("&rt ")) {
+//     if (msg.member.roles.cache.has(trustedID) || msg.member.id == codieID) {
+//         // twitterUrl = new URL(msg.content.substr(4))
+//         // console.log(twitterUrl)
+
+//         if (msg.content[4] != "h") {
+//             T.get("statuses/user_timeline", {"screen_name": msg.content.substring(4)})
+//                 .then(data => {
+//                     var url = new URL(`https://twitter.com/${msg.content.substring(4)}/status/${data.data[0].id_str}`);
+//                     client.users.cache.get(codieID).send(`Retweet requested by ${msg.member.user.username}#${msg.member.user.discriminator}\n${url}`)
+//                     .then(message => {
+//                         message.react(approveEmoji)
+//                         message.react(rejectEmoji)
+//                         // message.pin()
+//                     });
+//                 })
+//         } else {
+//             client.users.cache.get(codieID).send(`Retweet requested by ${msg.member.user.username}#${msg.member.user.discriminator}\n${new URL(msg.content.substr(4))}`)
+//             .then(message => {
+//                 message.react(approveEmoji)
+//                 message.react(rejectEmoji)
+//                 // message.pin()
+//             });
+//         }
+//     } else {
+//         msg.channel.send("You must be trusted to use this command.")
+//     }
+//   }
 });

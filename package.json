@@ -1,10 +1,10 @@
 {
   "name": "alphabot",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Ampersand Discord Bot",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "tsc && node dist/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

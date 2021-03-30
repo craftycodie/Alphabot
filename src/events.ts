@@ -1,0 +1,21 @@
+import { Message } from "discord.js";
+import EventEmitter from "events"
+
+enum Event {
+    COMMAND
+}
+
+class Events {
+    eventEmitter = new EventEmitter();
+
+    emitCommand(message:Message, name: String, args: String[]) {
+        this.eventEmitter.emit(Event[Event.COMMAND], message, name, args)
+    }
+
+    onCommand(commandHandler:(message: Message, name: String, args: String[]) => void) {
+        this.eventEmitter.on(Event[Event.COMMAND], commandHandler)
+    }
+
+}
+
+export default new Events();
