@@ -34,10 +34,12 @@ export default class TwitterModule implements IModule {
             }
 
             var tweetURL : URL = null
+            var findTweet = false;
 
             try {
                 tweetURL = new URL(args[0])
             } catch {
+                findTweet = true;
                 var data = await twitterBotClient.get("statuses/user_timeline", { "screen_name": args[0] })
                 tweetURL = new URL(`https://twitter.com/${args[0]}/status/${data.data[0].id_str}`);
             }
@@ -45,7 +47,16 @@ export default class TwitterModule implements IModule {
             var tweetID = tweetURL.pathname.substr(tweetURL.pathname.lastIndexOf("/") + 1)
 
             try {
-                var tweet = await twitterBotClient.get(`statuses/show/${tweetID}`)
+                var tweet = (await twitterBotClient.get(`statuses/show/${tweetID}`)).data
+                if (tweet.retweeted) {
+                    message.channel.send("& This tweet has already been retweeted. &")
+                    return
+                }
+                var pendingRetweet = await PendingRetweet.findOne({ tweetID }).exec()
+                if (pendingRetweet != null) {
+                    message.channel.send("& This retweet already has a pending request. &")
+                    return;
+                }
             } catch {
                 message.channel.send("& Tweet not found. &")
             }
@@ -60,6 +71,8 @@ export default class TwitterModule implements IModule {
             
             var pendingRetweet = new PendingRetweet({ approvalMessageID: approvalMessage.id, tweetID});
             pendingRetweet.save();
+
+            message.channel.send("& Retweet requested. &" + (findTweet ? `\n${args[0]}'s latest tweet: ${tweetURL}` : ""))
         }
     }
 
