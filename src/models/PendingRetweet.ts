@@ -1,4 +1,4 @@
 export default interface PendingRetweet {
-    approveMessageID: string
+    approvalMessageID: string
     tweetID: string
 }

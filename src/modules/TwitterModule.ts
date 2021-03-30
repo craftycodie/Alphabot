@@ -3,19 +3,27 @@ import events from "../events"
 import IModule from "./IModule"
 import discordBotClient from "../discord/discordBotClient"
 import twitterBotClient from "../twitter/twitterBotClient"
-import { Message } from "discord.js"
+import { Channel, Message, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
+import PendingRetweet from "../schema/PendingRetweet"
 
 const approveEmoji = "👍"
 const rejectEmoji = "👎"
 
 export default class TwitterModule implements IModule {
-    registerCommands() {
-        events.onCommand(this.retweetHandler)
+    registerModule() {
+        events.onDiscordReady(this.discordReadyHandler)
+        events.onDiscordCommand(this.retweetCommandHandler)
+        events.onDiscordReactionAdded(this.retweetApprovalReactionHandler)
     }
 
-    private async retweetHandler(message:Message, name: string, args: string[]): void {
+    tweetsChannel : TextChannel = null
+
+    private async retweetCommandHandler(message:Message, name: string, args: string[]) {
         if (name == "rt") {
-            if (!hasTrustedRole(message.member) && !isOpUser(message.author.id)) {
+            var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
+            var guildMember = await guild.members.fetch(message.author.id)
+
+            if (!hasTrustedRole(guildMember) && !isOpUser(message.author.id)) {
                 message.channel.send("& You must be trusted to use this command. &")
                 return;
             }
@@ -34,12 +42,92 @@ export default class TwitterModule implements IModule {
                 tweetURL = new URL(`https://twitter.com/${args[0]}/status/${data.data[0].id_str}`);
             }
 
-            discordBotClient.users.cache.get(process.env.DISCORD_OP_USER_ID).send(`Retweet requested by ${message.member.user.username}#${message.member.user.discriminator}\n${tweetURL}`)
-            .then(message => {
-                message.react(approveEmoji)
-                message.react(rejectEmoji)
-                // message.pin()
+            var tweetID = tweetURL.pathname.substr(tweetURL.pathname.lastIndexOf("/") + 1)
+
+            var opUser = await discordBotClient.users.fetch(process.env.DISCORD_OP_USER_ID)
+            var dmChannel = await opUser.createDM();
+
+            var approvalMessage : Message = await dmChannel.send(`& Retweet requested by ${message.member.user.username}#${message.member.user.discriminator} &\n${tweetURL}`)
+            approvalMessage.react(approveEmoji)
+            approvalMessage.react(rejectEmoji)
+            //approvalMessage.pin()
+            
+            var pendingRetweet = new PendingRetweet({ approvalMessageID: approvalMessage.id, tweetID});
+            pendingRetweet.save();
+        }
+    }
+
+    private async discordReadyHandler() {
+        this.tweetsChannel = await discordBotClient.channels.fetch(process.env.DISCORD_TWEETS_CHANNEL_ID) as TextChannel
+
+        var pendingRetweets = await PendingRetweet.find({})
+        var opUser = await discordBotClient.users.fetch(process.env.DISCORD_OP_USER_ID)
+        var dmChannel = await opUser.createDM();
+        
+        pendingRetweets.forEach(pendingRetweet => {
+            dmChannel.messages.fetch(pendingRetweet.approvalMessageID)
+        })
+    }
+
+    private async retweetApprovalReactionHandler(reaction: MessageReaction, user: User | PartialUser) {
+        // If the message isn't cached
+        if (reaction.message.author == null)
+            return
+        // If it's not a reaction to an Alphabot message or Alphabot is reacting, ignore.
+        if (reaction.message.author.id != discordBotClient.user.id || user.id == discordBotClient.user.id)
+            return
+
+        if (reaction.partial) {
+            try {
+                await reaction.fetch();
+            } catch (error) {
+                return
+            }
+        }
+
+        // If it's not a pending retweet message, move on.
+        var pendingRetweet = await PendingRetweet.findOne({ approvalMessageID: reaction.message.id }).exec()
+        if (pendingRetweet == null)
+            return
+
+        if (reaction.emoji.name == approveEmoji) {
+            twitterBotClient.post('statuses/retweet/:id', {id: pendingRetweet.tweetID}, () => {
+                console.log("done")
             });
+            this.tweetsChannel.send("New Tweet! https://twitter.com/statuses/" + pendingRetweet.tweetID)
+                .then(message => {
+                    fetch(
+                        `https://discord.com/api/v8/channels/${message.channel.id}/messages/${message.id}/crosspost`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+                            },
+                        },
+                    )
+                        .then(res => res.json())
+                        .then(json => {
+                            if (json.code) {
+                                // Util.debugLog(channel, `${json.message} (Code: ${json.code})`);
+                                console.debug(json.code)
+                            }
+                            else if (json.retry_after) {
+                                // Double check in case of high flow spam (since it's an async function)
+                                // if (Spam.rateLimitCheck(channel)) return;
+                                // Spam.addSpamChannel(channel, json.retry_after);
+                            }
+                            else {
+                                console.debug(`Published ${message.id} in ${message.channel.toString()} - ${message.guild.toString()}`);
+                                return;
+                            }
+                        });
+                })
+                
+            reaction.message.delete();
+            pendingRetweet.delete()
+        } else if (reaction.emoji.name == rejectEmoji) {
+            reaction.message.delete();
+            pendingRetweet.delete()
         }
     }
 }
