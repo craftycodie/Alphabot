@@ -44,6 +44,12 @@ export default class TwitterModule implements IModule {
 
             var tweetID = tweetURL.pathname.substr(tweetURL.pathname.lastIndexOf("/") + 1)
 
+            try {
+                var tweet = await twitterBotClient.get(`statuses/show/${tweetID}`)
+            } catch {
+                message.channel.send("& Tweet not found. &")
+            }
+
             var opUser = await discordBotClient.users.fetch(process.env.DISCORD_OP_USER_ID)
             var dmChannel = await opUser.createDM();
 
@@ -108,17 +114,11 @@ export default class TwitterModule implements IModule {
                         .then(res => res.json())
                         .then(json => {
                             if (json.code) {
-                                // Util.debugLog(channel, `${json.message} (Code: ${json.code})`);
-                                console.debug(json.code)
+                                console.error(`& Failed to publish retweet annoucement: ${json.code} &`)
                             }
                             else if (json.retry_after) {
-                                // Double check in case of high flow spam (since it's an async function)
-                                // if (Spam.rateLimitCheck(channel)) return;
-                                // Spam.addSpamChannel(channel, json.retry_after);
-                            }
-                            else {
-                                console.debug(`Published ${message.id} in ${message.channel.toString()} - ${message.guild.toString()}`);
-                                return;
+                                console.error(`& Failed to publish retweet annoucement: rate limited. &`)
+
                             }
                         });
                 })
