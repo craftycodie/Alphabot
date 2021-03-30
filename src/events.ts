@@ -8,11 +8,11 @@ enum Event {
 class Events {
     eventEmitter = new EventEmitter();
 
-    emitCommand(message:Message, name: String, args: String[]) {
+    emitCommand(message:Message, name: string, args: string[]) {
         this.eventEmitter.emit(Event[Event.COMMAND], message, name, args)
     }
 
-    onCommand(commandHandler:(message: Message, name: String, args: String[]) => void) {
+    onCommand(commandHandler:(message: Message, name: string, args: string[]) => void) {
         this.eventEmitter.on(Event[Event.COMMAND], commandHandler)
     }
 
