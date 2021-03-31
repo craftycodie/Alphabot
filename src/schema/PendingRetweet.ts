@@ -10,6 +10,10 @@ const PendingRetweetSchema = new Schema<PendingRetweetDocument>({
   tweetID: {
     type: String,
     required: true
+  },
+  discordUserID: {
+    type: String,
+    required: true
   }
 })
 
