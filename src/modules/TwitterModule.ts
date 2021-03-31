@@ -171,7 +171,7 @@ export default class TwitterModule implements IModule {
 
     private annouceTweet = async (tweet) => {
         // Exclude retweets and replies.
-        if ('retweeted_status' in tweet && !tweet.is_quote_status || tweet.in_reply_to_status_id != null)
+        if (('retweeted_status' in tweet && !tweet.is_quote_status) || tweet.in_reply_to_status_id != null)
             return;
         
         this.tweetsChannel.send(`& New tweet &\nhttps://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
