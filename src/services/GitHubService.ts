@@ -1,8 +1,13 @@
 import fetch from "node-fetch"
 import ogs from "open-graph-scraper"
+import moment from "moment"
 
 export default class GitHubService {
-    public async getRepo(username, reponame) {
+    private rateLimitReset = 0
+
+    public getRepo = async (username, reponame) => {
+        this.checkRateLimit();
+
         var res = await fetch(
             `https://api.github.com/repos/${username}/${reponame}`,
             {
@@ -13,13 +18,17 @@ export default class GitHubService {
             },
         )
 
+        await this.getRateLimit(res)
+
         if (res.status != 200)
             throw new Error(res.statusText);
         
         return await res.json();
     }
 
-    public async getLatestRelease(username, reponame) {
+    public getLatestRelease = async (username, reponame) => {
+        this.checkRateLimit();
+
         var res = await fetch(
             `https://api.github.com/repos/${username}/${reponame}/releases/latest`,
             {
@@ -30,13 +39,17 @@ export default class GitHubService {
             },
         )
 
+        await this.getRateLimit(res)
+
         if (res.status != 200)
             throw new Error(res.statusText);
         
         return await res.json();
     }
 
-    public async getIssue(username, reponame, issueNumber) {
+    public getIssue = async (username, reponame, issueNumber) => {
+        this.checkRateLimit();
+
         var res = await fetch(
             `https://api.github.com/repos/${username}/${reponame}/issues/${issueNumber}`,
             {
@@ -47,13 +60,17 @@ export default class GitHubService {
             },
         )
 
+        await this.getRateLimit(res)
+
         if (res.status != 200)
             throw new Error(res.statusText);
         
         return await res.json();
     }
 
-    public async getPulLRequest(username, reponame, issueNumber) {
+    public getPulLRequest = async (username, reponame, issueNumber) => {
+        this.checkRateLimit();
+
         var res = await fetch(
             `https://api.github.com/repos/${username}/${reponame}/pulls/${issueNumber}`,
             {
@@ -63,6 +80,8 @@ export default class GitHubService {
                 },
             },
         )
+
+        await this.getRateLimit(res)
 
         if (res.status != 200)
             throw new Error(res.statusText);
@@ -76,5 +95,28 @@ export default class GitHubService {
         if (og.result.ogImage && og.result.ogImage.url.indexOf("avatars.githubusercontent.com/u") != -1)
             return null
         return og.result.ogImage?.url
+    }
+
+    private checkRateLimit = () => {
+        if (this.rateLimitReset > new Date().getTime() / 1000)
+            throw new Error("Rate limit exceeded. Please try again in " + moment().to(new Date(this.rateLimitReset * 1000)))
+    }
+
+    private getRateLimit = async (res) => {
+        if (res.status == 403 && res.statusText == "rate limit exceeded") {
+            var res = await fetch(
+                `https://api.github.com/rate_limit`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                },
+            )
+            
+            this.rateLimitReset = (await res.json()).resources.core.reset
+
+            await this.checkRateLimit()
+        }
     }
 }

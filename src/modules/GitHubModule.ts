@@ -28,7 +28,7 @@ export default class GitHubModule implements IModule {
                         message.channel.send(await this.githubRepoEmbed(username, reponame))
                     }
                 } catch (error) {
-                    message.channel.send(`& ${error} &`)
+                    message.channel.send(`& ${error.message} &`)
                 }
             }
         })
@@ -37,35 +37,19 @@ export default class GitHubModule implements IModule {
     private async githubIssueEmbed(username, reponame, issueNumber) {
         var issue = null;
 
-        try {
-            issue = await this.githubService.getIssue(username, reponame, issueNumber)
-        } catch (error) {
-            if (error == "Error: rate limit exceeded")
-                throw new Error("The GitHub issue rate limit has been exceeded :(\nPlease try again later.")
-            else
-                throw new Error("Could not find GitHub issue.")
-        }
+        issue = await this.githubService.getIssue(username, reponame, issueNumber)
 
         var repo = null;
 
-        try {
-            repo = await this.githubService.getRepo(username, reponame)
-        } catch {
-            throw new Error("Could not find GitHub repository.")
-        }
+        repo = await this.githubService.getRepo(username, reponame)
 
         var pullRequest = ("pull_request" in issue)
 
         var color = issue.state == "open" ? "#56d364" : "#da3633"
 
-        if (pullRequest) {
-            try {
-                if ((await this.githubService.getPulLRequest(username, reponame, issueNumber)).merged)
-                    color = "#a371f7"
-            } catch {
-
-            }
-        }
+        if (pullRequest)
+            if ((await this.githubService.getPulLRequest(username, reponame, issueNumber)).merged)
+                color = "#a371f7"
 
         const issueEmbed = new MessageEmbed()
             .setColor(color)
@@ -82,11 +66,7 @@ export default class GitHubModule implements IModule {
     private async githubNewIssueEmbed(username, reponame) {
         var repo = null;
 
-        try {
-            repo = await this.githubService.getRepo(username, reponame)
-        } catch {
-            throw new Error("Could not find GitHub repository.")
-        }
+        repo = await this.githubService.getRepo(username, reponame)
 
         const repoEmbed = new MessageEmbed()
             .setColor('#171515')
@@ -102,11 +82,7 @@ export default class GitHubModule implements IModule {
         var repo = null;
         var latestRelease = null;
 
-        try {
-            repo = await this.githubService.getRepo(username, reponame)
-        } catch (error) {
-            throw new Error("Could not find GitHub repository.")
-        }
+        repo = await this.githubService.getRepo(username, reponame)
 
         try {
             latestRelease = await this.githubService.getLatestRelease(username, reponame)
