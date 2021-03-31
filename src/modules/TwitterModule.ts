@@ -41,13 +41,18 @@ export default class TwitterModule implements IModule {
             try {
                 tweetURL = new URL(args[0])
             } catch {
-                findTweet = true;
-                var data = await twitterBotClient.get("statuses/user_timeline", { 
-                    "screen_name": args[0],
-                    "exclude_replies": true,
-                    "include_rts": false
-                })
-                tweetURL = new URL(`https://twitter.com/${args[0]}/status/${data.data[0].id_str}`);
+                try {
+                    findTweet = true;
+                    var data = await twitterBotClient.get("statuses/user_timeline", { 
+                        "screen_name": args[0],
+                        "exclude_replies": true,
+                        "include_rts": false
+                    })
+                    tweetURL = new URL(`https://twitter.com/${args[0]}/status/${data.data[0].id_str}`);
+                } catch (error) {
+                    message.channel.send("& Failed to find a tweet. &")
+                    return;
+                }
             }
 
             var tweetID = tweetURL.pathname.substr(tweetURL.pathname.lastIndexOf("/") + 1)

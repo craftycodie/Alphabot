@@ -8,6 +8,7 @@ const PendingRetweetSchema = new Schema<PendingRetweetDocument>({
   },
   tweetID: {
     type: String,
+    unique: true,
     required: true
   },
   discordUserID: {

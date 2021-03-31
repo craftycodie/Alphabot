@@ -19,7 +19,29 @@ class DiscordBotClient extends Client {
         this.on('message', (msg) => {
             if(msg.content.startsWith("&")) {
                 var split = msg.content.substr(1).split(/[ ,]+/)
-                events.emitDiscordCommand(msg, split[0], split.length > 1 ? split.slice(1) : [])
+                var commandName = split[0]
+                var args : string[] = []
+                // Crappy arguments parsing.
+                if (split.length > 1) {
+                    split = split.slice(1)
+                    var curr = null
+                    split.forEach(bit => {
+                        if (curr == null && bit[0] != "\"") {
+                            args.push(bit)
+                        } else {
+                            if (curr == null && bit[0] == "\"") {
+                                curr = bit.substr(1)
+                            } else if (curr != null && bit[bit.length -1] == "\"") {
+                                curr += " " + bit.substr(0, bit.length -1)
+                                args.push(curr)
+                                curr = null
+                            } else if (curr != null) {
+                                curr += " " + bit
+                            }
+                        }
+                    })
+                }
+                events.emitDiscordCommand(msg, commandName, args)
             }
         });
     }
