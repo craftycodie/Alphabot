@@ -147,7 +147,8 @@ export default class TwitterModule implements IModule {
 
     private listenToTweets() {
         var stream = twitterBotClient.stream('statuses/filter', { follow: process.env.TWITTER_USER_ID })
-        
+        console.debug("& Twitter stream connected.")
+
         stream.on('tweet', this.annouceTweet)
     }
 
@@ -172,6 +173,6 @@ export default class TwitterModule implements IModule {
     }
 
     getHelpText() {
-        return "`&rt <tweet URL>`\rRequest @AmperTweets to retweet something.\nYou can also enter a twitter username, the latest tweet will be requested."
+        return "`&rt <tweet URL>`\nRequest @AmperTweets to retweet something.\nYou can also enter a twitter username, the latest tweet will be requested."
     }
 }

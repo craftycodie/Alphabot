@@ -9,14 +9,14 @@ export default class HelpModule implements IModule {
     registerModule() {
         events.onDiscordCommand((message, name) => {
             if (name == "help" || name == "?") {
-                const helpText = modules.map(module => module.getHelpText()).join("\n")
+                const helpText = modules.map(module => module.getHelpText()).join("\n\n")
 
                 const helpEmbed = new MessageEmbed()
                     .setColor('#DD2E44')
                     .setTitle(`${packageInfo.name} v${packageInfo.version}`)
                     .setURL('https://ampersand.social/')
                     .setAuthor(packageInfo.author)
-                    .setDescription(`**${packageInfo.description}**\n${helpText}`)
+                    .setDescription(`**${packageInfo.description}**\n\n${helpText}`)
                     .setThumbnail(discordBotClient.user.avatarURL())
                     .setTimestamp()
 
@@ -26,6 +26,6 @@ export default class HelpModule implements IModule {
     }
 
     getHelpText() {
-        return null
+        return "`&help` \nShows this message."
     }
 }

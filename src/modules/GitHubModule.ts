@@ -123,7 +123,7 @@ export default class GitHubModule implements IModule {
                 { 
                     inline: true,
                     name: "Homepage",
-                    value: repo.homepage != null ? repo.homepage : "No Homepage"
+                    value: repo.homepage != null && repo.homepage != "" ? repo.homepage : "No Homepage"
                 },
                 { 
                     inline: true,
