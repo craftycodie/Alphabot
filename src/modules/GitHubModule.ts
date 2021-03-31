@@ -40,7 +40,10 @@ export default class GitHubModule implements IModule {
         try {
             issue = await this.githubService.getIssue(username, reponame, issueNumber)
         } catch (error) {
-            throw new Error("Could not find GitHub issue.")
+            if (error == "Error: rate limit exceeded")
+                throw new Error("The GitHub issue rate limit has been exceeded :(\nPlease try again later.")
+            else
+                throw new Error("Could not find GitHub issue.")
         }
 
         var repo = null;
@@ -53,8 +56,19 @@ export default class GitHubModule implements IModule {
 
         var pullRequest = ("pull_request" in issue)
 
+        var color = issue.state == "open" ? "#56d364" : "#da3633"
+
+        if (pullRequest) {
+            try {
+                if ((await this.githubService.getPulLRequest(username, reponame, issueNumber)).merged)
+                    color = "#a371f7"
+            } catch {
+
+            }
+        }
+
         const issueEmbed = new MessageEmbed()
-            .setColor('#171515')
+            .setColor(color)
             .setTitle(`${repo.owner.login}/${repo.name} #${issue.number}`)
             .setURL(issue.html_url)
             .setAuthor(`${issue.user.login}`, issue.user.avatar_url)
@@ -151,8 +165,8 @@ export default class GitHubModule implements IModule {
     }
 
     getHelpText() {
-        return "`&github <username>/<reponame>`\nShow information about a GitHub repo.\n"
-            + "`&github <username>/<reponame>#<issue number>`\nShow information about a GitHub issue or pull request."
-            + "`&github <username>/<reponame>#new`\nProvides a link to create a new issue."
+        return "`&github <username>/<reponame>`\nShow information about a GitHub repo."
+            + "\n`&github <username>/<reponame>#<issue number>`\nShow information about a GitHub issue or pull request."
+            + "\n`&github <username>/<reponame>#new`\nProvides a link to create a new issue."
     }
 }

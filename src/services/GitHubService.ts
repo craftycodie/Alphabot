@@ -53,6 +53,23 @@ export default class GitHubService {
         return await res.json();
     }
 
+    public async getPulLRequest(username, reponame, issueNumber) {
+        var res = await fetch(
+            `https://api.github.com/repos/${username}/${reponame}/pulls/${issueNumber}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+            },
+        )
+
+        if (res.status != 200)
+            throw new Error(res.statusText);
+        
+        return await res.json();
+    }
+
     public async getRepoReadmeImageURL(username, reponame) {
         var og = await ogs({ url: `https://github.com/${username}/${reponame}` })
         // Ignore avatars.
