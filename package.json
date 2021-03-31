@@ -1,0 +1,34 @@
+{
+  "name": "alphabot",
+  "version": "1.0.0",
+  "description": "Ampersand Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmpersandDevs/Alphabot.git"
+  },
+  "author": "Ampersand",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AmpersandDevs/Alphabot/issues"
+  },
+  "homepage": "https://github.com/AmpersandDevs/Alphabot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "mongoose": "^5.12.2",
+    "node-fetch": "^2.6.1",
+    "open-graph-scraper": "^4.8.1",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.3"
+  }
+}
