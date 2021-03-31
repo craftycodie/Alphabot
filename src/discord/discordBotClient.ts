@@ -5,7 +5,7 @@ const Discord = require('discord.js')
 const client : Client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
 
 client.on('ready', () => {
-    console.log('Bot is ready');
+    console.log('& Discord client connected.');
     events.emitDiscordReady()
 });
 client.login(process.env.DISCORD_BOT_TOKEN)

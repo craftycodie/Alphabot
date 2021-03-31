@@ -19,7 +19,7 @@ export default class TwitterModule implements IModule {
     tweetsChannel : TextChannel = null
 
     private async retweetCommandHandler(message:Message, name: string, args: string[]) {
-        if (name == "rt") {
+        if (name == "rt" || name == "retweet") {
             var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
             var guildMember = await guild.members.fetch(message.author.id)
 
@@ -69,7 +69,12 @@ export default class TwitterModule implements IModule {
             approvalMessage.react(rejectEmoji)
             //approvalMessage.pin()
             
-            var pendingRetweet = new PendingRetweet({ approvalMessageID: approvalMessage.id, tweetID});
+            var pendingRetweet = new PendingRetweet({ 
+                approvalMessageID: approvalMessage.id, 
+                tweetID, 
+                discordUserID: message.author.id 
+            });
+
             pendingRetweet.save();
 
             message.channel.send("& Retweet requested. &" + (findTweet ? `\n${args[0]}'s latest tweet: ${tweetURL}` : ""))
@@ -113,7 +118,7 @@ export default class TwitterModule implements IModule {
             twitterBotClient.post('statuses/retweet/:id', {id: pendingRetweet.tweetID}, () => {
                 console.log("done")
             });
-            this.tweetsChannel.send("New Tweet! https://twitter.com/statuses/" + pendingRetweet.tweetID)
+            this.tweetsChannel.send(`& Retweet from <@${pendingRetweet.discordUserID}> &\nhttps://twitter.com/statuses/${pendingRetweet.tweetID}`)
                 .then(message => {
                     fetch(
                         `https://discord.com/api/v8/channels/${message.channel.id}/messages/${message.id}/crosspost`,
@@ -142,5 +147,9 @@ export default class TwitterModule implements IModule {
             reaction.message.delete();
             pendingRetweet.delete()
         }
+    }
+
+    getHelpText() {
+        return "`&rt <tweet URL>`\rRequest @AmperTweets to retweet something.\nYou can also enter a twitter username, the latest tweet will be requested."
     }
 }
