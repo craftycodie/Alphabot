@@ -3,7 +3,7 @@ import events from "../events"
 import IModule from "./IModule"
 import discordBotClient from "../discord/discordBotClient"
 import twitterBotClient from "../twitter/twitterBotClient"
-import { Channel, Message, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
+import { Message, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
 import PendingRetweet from "../schema/PendingRetweet"
 
 const approveEmoji = "👍"
@@ -14,11 +14,13 @@ export default class TwitterModule implements IModule {
         events.onDiscordReady(this.discordReadyHandler)
         events.onDiscordCommand(this.retweetCommandHandler)
         events.onDiscordReactionAdded(this.retweetApprovalReactionHandler)
+
+        this.listenToTweets()
     }
 
     tweetsChannel : TextChannel = null
 
-    private async retweetCommandHandler(message:Message, name: string, args: string[]) {
+    private async retweetCommandHandler(message: Message, name: string, args: string[]) {
         if (name == "rt" || name == "retweet") {
             var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
             var guildMember = await guild.members.fetch(message.author.id)
@@ -40,7 +42,11 @@ export default class TwitterModule implements IModule {
                 tweetURL = new URL(args[0])
             } catch {
                 findTweet = true;
-                var data = await twitterBotClient.get("statuses/user_timeline", { "screen_name": args[0] })
+                var data = await twitterBotClient.get("statuses/user_timeline", { 
+                    "screen_name": args[0],
+                    "exclude_replies": true,
+                    "include_rts": false
+                })
                 tweetURL = new URL(`https://twitter.com/${args[0]}/status/${data.data[0].id_str}`);
             }
 
@@ -81,7 +87,7 @@ export default class TwitterModule implements IModule {
         }
     }
 
-    private async discordReadyHandler() {
+    private discordReadyHandler = async () => {
         this.tweetsChannel = await discordBotClient.channels.fetch(process.env.DISCORD_TWEETS_CHANNEL_ID) as TextChannel
 
         var pendingRetweets = await PendingRetweet.find({})
@@ -93,7 +99,7 @@ export default class TwitterModule implements IModule {
         })
     }
 
-    private async retweetApprovalReactionHandler(reaction: MessageReaction, user: User | PartialUser) {
+    private retweetApprovalReactionHandler = async (reaction: MessageReaction, user: User | PartialUser) => {
         // If the message isn't cached
         if (reaction.message.author == null)
             return
@@ -115,20 +121,11 @@ export default class TwitterModule implements IModule {
             return
 
         if (reaction.emoji.name == approveEmoji) {
-            twitterBotClient.post('statuses/retweet/:id', {id: pendingRetweet.tweetID}, () => {
-                console.log("done")
-            });
-            this.tweetsChannel.send(`& Retweet from <@${pendingRetweet.discordUserID}> &\nhttps://twitter.com/statuses/${pendingRetweet.tweetID}`)
+            twitterBotClient.post('statuses/retweet/:id', { id: pendingRetweet.tweetID });
+            var tweet = (await twitterBotClient.get("statuses/show/:id", { id: pendingRetweet.tweetID })).data
+            this.tweetsChannel.send(`& Retweet from <@${pendingRetweet.discordUserID}> &\nhttps://twitter.com/${tweet.user.screen_name}/status/${pendingRetweet.tweetID}`)
                 .then(message => {
-                    fetch(
-                        `https://discord.com/api/v8/channels/${message.channel.id}/messages/${message.id}/crosspost`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-                            },
-                        },
-                    )
+                    discordBotClient.crosspost(message)
                         .then(res => res.json())
                         .then(json => {
                             if (json.code) {
@@ -136,7 +133,6 @@ export default class TwitterModule implements IModule {
                             }
                             else if (json.retry_after) {
                                 console.error(`& Failed to publish retweet annoucement: rate limited. &`)
-
                             }
                         });
                 })
@@ -147,6 +143,32 @@ export default class TwitterModule implements IModule {
             reaction.message.delete();
             pendingRetweet.delete()
         }
+    }
+
+    private listenToTweets() {
+        var stream = twitterBotClient.stream('statuses/filter', { follow: process.env.TWITTER_USER_ID })
+        
+        stream.on('tweet', this.annouceTweet)
+    }
+
+    private annouceTweet = async (tweet) => {
+        // Exclude retweets and replies.
+        if ('retweeted_status' in tweet && !tweet.is_quote_status || tweet.in_reply_to_status_id != null)
+            return;
+        
+        this.tweetsChannel.send(`& New tweet &\nhttps://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+        .then(message => {
+            discordBotClient.crosspost(message)
+                .then(res => res.json())
+                .then(json => {
+                    if (json.code) {
+                        console.error(`& Failed to publish retweet annoucement: ${json.code} &`)
+                    }
+                    else if (json.retry_after) {
+                        console.error(`& Failed to publish retweet annoucement: rate limited. &`)
+                    }
+                });
+        })
     }
 
     getHelpText() {
