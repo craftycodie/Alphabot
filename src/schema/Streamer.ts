@@ -4,6 +4,7 @@ import Streamer from "../models/Streamer"
 const StreamerSchema = new Schema<StreamerDocument>({
   twitchChannel: {
     type: String,
+    unique: true,
     required: true
   },
   addedByDiscordUserID: {

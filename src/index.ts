@@ -9,6 +9,7 @@ import GitHubModule from "./modules/GitHubModule"
 import TwitchModule from "./modules/TwitchModule"
 
 import * as packageInfo from "../package.json"
+import EventsModule from "./modules/EventsModule";
 
 
 
@@ -21,6 +22,7 @@ export const modules = [
     new TwitterModule(),
     new GitHubModule(),
     new TwitchModule(),
+    new EventsModule,
     new HelpModule(),
 
     new DebugModule(),
