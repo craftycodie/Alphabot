@@ -13,6 +13,7 @@ export default class TwitterModule implements IModule {
     registerModule() {
         events.onDiscordReady(this.discordReadyHandler)
         events.onDiscordCommand(this.retweetCommandHandler)
+        events.onDiscordCommand(this.tweetCommandHandler)
         events.onDiscordReactionAdded(this.retweetApprovalReactionHandler)
 
         this.listenToTweets()
@@ -89,6 +90,17 @@ export default class TwitterModule implements IModule {
             pendingRetweet.save();
 
             message.channel.send("& Retweet requested. &" + (findTweet ? `\n${args[0]}'s latest tweet: ${tweetURL}` : ""))
+        }
+    }
+
+    private async tweetCommandHandler(message: Message, name: string, args: string[]) {
+        if (!isOpUser(message.author.id)) {
+            message.channel.send("& You must be an operator to use this command. &")
+            return;
+        }
+
+        if (name == "tweet") {
+            await twitterBotClient.post("statuses/update", { status: args.join(" ") })
         }
     }
 

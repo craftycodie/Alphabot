@@ -17,7 +17,10 @@ class DiscordBotClient extends Client {
         });
         
         this.on('message', (msg) => {
-            if(msg.content.startsWith("&")) {
+            if (msg.author.id == this.user.id)
+                return
+                
+            if (msg.content.startsWith("&")) {
                 var split = msg.content.substr(1).split(/[ ,]+/)
                 var commandName = split[0]
                 var args : string[] = []
