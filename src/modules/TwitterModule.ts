@@ -94,12 +94,12 @@ export default class TwitterModule implements IModule {
     }
 
     private async tweetCommandHandler(message: Message, name: string, args: string[]) {
-        if (!isOpUser(message.author.id)) {
-            message.channel.send("& You must be an operator to use this command. &")
-            return;
-        }
-
         if (name == "tweet") {
+            if (!isOpUser(message.author.id)) {
+                message.channel.send("& You must be an operator to use this command. &")
+                return;
+            }
+
             await twitterBotClient.post("statuses/update", { status: args.join(" ") })
         }
     }

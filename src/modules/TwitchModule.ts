@@ -31,6 +31,11 @@ export default class TwitchModule implements IModule {
                 return;
             }
 
+            if (args.length != 1) {
+                message.channel.send("& Invalid arguments. &")
+                return;
+            }
+
             var streamer = await Streamer.findOne({ twitchChannel: args[0] }).exec()
 
             if (streamer != null) {
@@ -59,6 +64,11 @@ export default class TwitchModule implements IModule {
 
             if (!hasTrustedRole(guildMember) && !isOpUser(message.author.id)) {
                 message.channel.send("& You must be trusted to use this command. &")
+                return;
+            }
+            
+            if (args.length != 1) {
+                message.channel.send("& Invalid arguments. &")
                 return;
             }
 
@@ -117,7 +127,8 @@ export default class TwitchModule implements IModule {
     }
 
     getHelpText() {
-        return "`&addstream <channel>` \nEnable Twitch stream annoucements for a channel."
-            + "\n`&removestream <channel>` \nDisable Twitch stream annoucements for a channel."
+        return "`&addstream <channel>`\nEnable Twitch stream annoucements for a channel."
+            + "\n`&removestream <channel>`\nDisable Twitch stream annoucements for a channel."
+            + "\n`&twitch <channel>`\nShow a channel embed."
     }
 }

@@ -10,6 +10,10 @@ enum Event {
 class Events {
     eventEmitter = new EventEmitter();
 
+    constructor() {
+        this.eventEmitter.setMaxListeners(50)
+    }
+
     emitDiscordCommand(message:Message, name: string, args: string[]) {
         this.eventEmitter.emit(Event[Event.DISCORD_COMMAND], message, name, args)
     }

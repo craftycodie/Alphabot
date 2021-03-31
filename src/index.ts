@@ -7,11 +7,10 @@ import TwitterModule from "./modules/TwitterModule"
 import HelpModule from "./modules/HelpModule"
 import GitHubModule from "./modules/GitHubModule"
 import TwitchModule from "./modules/TwitchModule"
+import EventsModule from "./modules/EventsModule";
+import MinecraftModule from "./modules/MinecraftModule";
 
 import * as packageInfo from "../package.json"
-import EventsModule from "./modules/EventsModule";
-
-
 
 console.log(`&&& ${packageInfo.name} v${packageInfo.version} &&&`)
 
@@ -24,6 +23,7 @@ export const modules = [
     new TwitchModule(),
     new EventsModule,
     new HelpModule(),
+    new MinecraftModule(),
 
     new DebugModule(),
 ]
