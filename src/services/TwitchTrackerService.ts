@@ -49,7 +49,7 @@ export default class TwitchTrackerService {
         )).json()).data
 
         streams.forEach(stream => {
-            if (!getInitial && (!this.previousStreams.has(stream.user_login) || this.previousStreams[stream.user_login] < new Date(stream.started_at).getTime()))
+            if (!getInitial && (!this.previousStreams.has(stream.user_login) || this.previousStreams.get(stream.user_login) < new Date(stream.started_at).getTime()))
                 this.onLive(stream)
 
             this.previousStreams.set(stream.user_login, new Date(stream.started_at).getTime())
