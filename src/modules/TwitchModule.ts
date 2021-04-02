@@ -130,6 +130,5 @@ export default class TwitchModule implements IModule {
     getHelpText() {
         return "`&addstream <channel>`\nEnable Twitch stream annoucements for a channel."
             + "\n`&removestream <channel>`\nDisable Twitch stream annoucements for a channel."
-            + "\n`&twitch <channel>`\nShow a channel embed."
     }
 }
