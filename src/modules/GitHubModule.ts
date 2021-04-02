@@ -97,7 +97,7 @@ export default class GitHubModule implements IModule {
             .setTitle(repo.name)
             .setURL(repo.html_url)
             .setAuthor(repo.owner.login, repo.owner.avatar_url)
-            .setDescription(repo.description)
+            .setDescription(`${repo.description}\n\n[Fork ${repo.name}](${repo.html_url}/fork)`)
             .setImage(repoImageURL)
             .setTimestamp(new Date(repo.updated_at).getTime())
             .setFooter("GitHub", "https://github.githubassets.com/favicons/favicon-dark.png")

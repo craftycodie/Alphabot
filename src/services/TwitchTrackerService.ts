@@ -2,14 +2,17 @@ import fetch from 'node-fetch'
 import sleep from '../utils/sleep'
 
 export default class TwitchTrackerService {
+    private static readonly POLL_FREQUENCY_SECONDS = 30
+
     channels : string[] = []
-    lastChecked = new Date()
     onLive :  (stream: any) => void = null
     running = false
+    previousStreams : Map<string, number> = new Map()
 
     constructor(channels : string[], onLive : (stream: any) => void) {
         this.channels = channels
         this.onLive = onLive
+        this.checkStreams(true)
     }
 
     public start = async () => {
@@ -17,8 +20,8 @@ export default class TwitchTrackerService {
         this.running = true
         
         while (this.running) {
-            await sleep(30000)
-            await this.checkStreams()
+            await sleep(TwitchTrackerService.POLL_FREQUENCY_SECONDS * 1000)
+            await this.checkStreams(false)
         }
     }
 
@@ -30,7 +33,7 @@ export default class TwitchTrackerService {
         this.channels = channels
     }
 
-    private checkStreams = async () => {
+    private checkStreams = async (getInitial: boolean = false) => {
         var access_token = await this.authenticate()
 
         var streams : any[] = (await (await fetch(
@@ -46,14 +49,11 @@ export default class TwitchTrackerService {
         )).json()).data
 
         streams.forEach(stream => {
-            if (new Date(stream.started_at) > this.lastChecked) {
+            if (!getInitial && (!this.previousStreams.has(stream.user_login) || this.previousStreams[stream.user_login] < new Date(stream.started_at).getTime()))
                 this.onLive(stream)
-            }
+
+            this.previousStreams.set(stream.user_login, new Date(stream.started_at).getTime())
         })
-
-        this.lastChecked = new Date()
-
-        return streams
     }
 
     private authenticate = async () : Promise<string> => {

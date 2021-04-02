@@ -191,5 +191,6 @@ export default class TwitterModule implements IModule {
 
     getHelpText() {
         return "`&rt <tweet URL>`\nRequest @AmperTweets to retweet something.\nYou can also enter a twitter username, the latest tweet will be requested."
+            + "\n`&tweet <status>`\nSend a tweet from @AmperTweets (Ops only)"
     }
 }

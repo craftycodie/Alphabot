@@ -14,7 +14,7 @@ import * as packageInfo from "../package.json"
 
 console.log(`&&& ${packageInfo.name} v${packageInfo.version} &&&`)
 
-connect(process.env.MONGO_DB_CONNECT_STRING)
+connect(process.env.MONGO_DB_CONNECT_STRING, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(() => { console.log("& Mongoose connected. ")})
 
 export const modules = [
