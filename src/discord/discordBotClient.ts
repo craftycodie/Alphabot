@@ -9,6 +9,12 @@ class DiscordBotClient extends Client {
         this.on('ready', () => {
             console.log('& Discord client connected.');
             events.emitDiscordReady()
+            this.user.setPresence({
+                activity: {
+                    name: "i gay",
+                    type: "LISTENING",
+                }
+            })
         });
         this.login(process.env.DISCORD_BOT_TOKEN)
         
