@@ -100,8 +100,9 @@ export default class TwitchModule implements IModule {
 
     private annouceStream = (stream) => {
         var embed = new MessageEmbed()
-            .setImage(`https://static-cdn.jtvnw.net/previews-ttv/live_user_${stream.user_login}.jpg`)
-            .setAuthor(stream.user_login)
+            .setImage(stream.thumbnail_url.replace("{width}", 400).replace("{height}", 225))
+            .setAuthor(stream.user_login, stream.profile_pic)
+            .setDescription(`${stream.user_login} is live!\n**[Watch Stream](https://twitch.tv/${stream.user_login})**`)
             .setTitle(stream.title)
             .setURL("https://www.twitch.tv/" + stream.user_login)
             .setTimestamp(new Date(stream.started_at))
@@ -111,16 +112,16 @@ export default class TwitchModule implements IModule {
         if (stream.game != null && stream.game != "")
             embed.addField("Game", stream.game)
 
-        this.streamsChannel.send(`& **${stream.user_login}** is live! &\nhttps://twitch.tv/${stream.user_login}`, embed)
+        this.streamsChannel.send(embed)
             .then(message => {
                 discordBotClient.crosspost(message)
                     .then(res => res.json())
                     .then(json => {
                         if (json.code) {
-                            console.error(`& Failed to publish retweet annoucement: ${json.code} &`)
+                            console.error(`& Failed to publish stream annoucement: ${json.code} &`)
                         }
                         else if (json.retry_after) {
-                            console.error(`& Failed to publish retweet annoucement: rate limited. &`)
+                            console.error(`& Failed to publish stream annoucement: rate limited. &`)
                         }
                     });
             })
