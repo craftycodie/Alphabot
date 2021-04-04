@@ -2,7 +2,7 @@ import { hasTrustedRole, isOpUser } from "../discord/permissions"
 import events from "../events"
 import IModule from "./IModule"
 import discordBotClient from "../discord/discordBotClient"
-import { Message, MessageEmbed, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
+import { Message, MessageEmbed, TextChannel } from "discord.js"
 import Streamer from "../schema/Streamer"
 import TwitchTrackerService from "../services/TwitchTrackerService"
 
