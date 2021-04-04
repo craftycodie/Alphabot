@@ -4,6 +4,7 @@ import * as packageInfo from "../../package.json"
 import { MessageEmbed } from "discord.js"
 import discordBotClient from "../discord/discordBotClient"
 import { modules } from ".."
+import os from "os"
 
 export default class HelpModule implements IModule {
     registerModule() {
@@ -16,6 +17,7 @@ export default class HelpModule implements IModule {
                     .setTitle(`${packageInfo.name} v${packageInfo.version}`)
                     .setURL('https://ampersand.social/')
                     .setAuthor(packageInfo.author)
+                    .setFooter("Running on " + os.hostname())
                     .setDescription(`**${packageInfo.description}**\n\n${helpText}`)
                     .setThumbnail(discordBotClient.user.avatarURL())
                     .setTimestamp()

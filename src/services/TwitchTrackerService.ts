@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import sleep from '../utils/sleep'
 
 export default class TwitchTrackerService {
-    private static readonly POLL_FREQUENCY_SECONDS = 30
+    private static readonly POLL_FREQUENCY_SECONDS = 60
 
     channels : string[] = []
     onLiveCallback :  (stream: any) => void = null
@@ -21,7 +21,11 @@ export default class TwitchTrackerService {
         
         while (this.running) {
             await sleep(TwitchTrackerService.POLL_FREQUENCY_SECONDS * 1000)
-            await this.checkStreams(false)
+            try {
+                await this.checkStreams(false)
+            } catch {
+                // ignore
+            }
         }
     }
 
