@@ -21,7 +21,7 @@ export const modules = [
     new TwitterModule(),
     new GitHubModule(),
     new TwitchModule(),
-    new EventsModule,
+    new EventsModule(),
     new HelpModule(),
     new MinecraftModule(),
 
