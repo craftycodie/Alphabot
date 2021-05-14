@@ -24,50 +24,31 @@ export default class MinecraftModule implements IModule {
             var port = split.length > 1 ? parseInt(split[1]) : 25565
 
             try {
-                var server = await this.mineOnlineService.getServer(host, port)
+                var server = await Query.status(host, { port })
 
-                var description = `${server.motd}\n\n${server.connectAddress}:${server.port}\n\n**Players** (${server.users}/${server.maxUsers})`
+                var description = `${host}:${server.port}\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
 
-                server.players.forEach(player => {
-                    description += "\n• " + player
+                server.samplePlayers.forEach(player => {
+                    description += "\n• " + player.name
                 });
 
                 const serverEmbed = new MessageEmbed()
-                .setColor('#34aa2f')
-                .setTitle(server.name)
-                .setDescription(description)
-                .setFooter("MineOnline", "https://mineonline.codie.gg/favicon.png")
-                .setTimestamp()
+                    .setColor('#34aa2f')
+                    .setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
+                    .setDescription(description)
+                    .addFields([
+                        {
+                            name: "Version",
+                            value: server.version,
+                            inline: true
+                        }
+                    ])
+                    .setFooter("Minecraft", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-96x96.png")
+                    .setTimestamp()
 
                 message.channel.send(serverEmbed)
             } catch {
-                try {
-                    var server = await Query.status(host, { port })
-
-                    var description = `${host}:${server.port}\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
-
-                    server.samplePlayers.forEach(player => {
-                        description += "\n• " + player.name
-                    });
-
-                    const serverEmbed = new MessageEmbed()
-                        .setColor('#34aa2f')
-                        .setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
-                        .setDescription(description)
-                        .addFields([
-                            {
-                                name: "Version",
-                                value: server.version,
-                                inline: true
-                            }
-                        ])
-                        .setFooter("Minecraft", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-96x96.png")
-                        .setTimestamp()
-
-                    message.channel.send(serverEmbed)
-                } catch {
-                    message.channel.send("& Failed to query server. &")
-                }
+                message.channel.send("& Failed to query server. &")
             }
         }
     }
