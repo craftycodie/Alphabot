@@ -2,15 +2,12 @@ import events from "../events"
 import IModule from "./IModule"
 import { Message, MessageEmbed } from "discord.js"
 import Query from "minecraft-server-util"
-import MineOnlineService from "../services/MineOnlineService"
 
 
 export default class MinecraftModule implements IModule {
     registerModule() {
         events.onDiscordCommand(this.mcServerHandler)
     }
-
-    mineOnlineService = new MineOnlineService()
 
     private mcServerHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "mcserver" || name == "mc") {
