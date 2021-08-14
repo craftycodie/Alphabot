@@ -9,6 +9,7 @@ import GitHubModule from "./modules/GitHubModule"
 import TwitchModule from "./modules/TwitchModule"
 import EventsModule from "./modules/EventsModule";
 import MinecraftModule from "./modules/MinecraftModule";
+import MinecraftServerModule from "./modules/MinecraftServerModule";
 
 import * as packageInfo from "../package.json"
 
@@ -23,7 +24,8 @@ export const modules = [
     new TwitchModule(),
     new EventsModule(),
     new HelpModule(),
-    new MinecraftModule(),
+    // new MinecraftModule(),
+    new MinecraftServerModule(),
 
     new DebugModule(),
 ]
