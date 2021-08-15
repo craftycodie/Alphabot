@@ -21,12 +21,10 @@ test_script:
 
 build_script:
   - npm run build
-  - cd dist
-  - 7z a dist.zip *
-  - cd ..
+  - 7z a dist.zip ./dist/*
 
 artifacts:
-  - path: dist\dist.zip
+  - path: dist.zip
     name: Alphabot
 
 
