@@ -4,6 +4,7 @@
   "description": "Crafty Patch Discord Bot",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "start": "tsc && node dist/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
