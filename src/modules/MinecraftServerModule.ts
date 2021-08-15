@@ -19,24 +19,21 @@ export default class MinecraftServerModule implements IModule {
 
     private mcServerHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "mc") {
+            var description = `**IP** ${process.env.MINECRAFT_IP}${process.env.MINECRAFT_PORT != "25565" ? ":" + server.port : ""}\n\n`
+
+            var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
+
+
+            const serverEmbed = new MessageEmbed()
+                .setColor('#DD2E44')
+                .setThumbnail(guild.iconURL())
+                .setFooter("Minecraft", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-96x96.png")
+                .setTimestamp()
+
             try {
                 var server = await Query.status(process.env.MINECRAFT_IP, { port: parseInt(process.env.MINECRAFT_PORT) })
 
-                var description = `${process.env.MINECRAFT_IP}${server.port != 25565 ? ":" + server.port : ""}\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
-
-                if (server.samplePlayers) {
-                    server.samplePlayers.forEach(player => {
-                        description += "\n• " + player.name
-                    })
-                }
-
-                var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
-
-                const serverEmbed = new MessageEmbed()
-                    .setColor('#34aa2f')
-                    .setThumbnail(guild.iconURL())
-                    .setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
-                    .setDescription(description)
+                serverEmbed.setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
                     .addFields([
                         {
                             name: "Version",
@@ -44,13 +41,21 @@ export default class MinecraftServerModule implements IModule {
                             inline: true
                         }
                     ])
-                    .setFooter("Minecraft", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-96x96.png")
-                    .setTimestamp()
 
-                message.channel.send(serverEmbed)
+                description += `**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+
+                if (server.samplePlayers) {
+                    server.samplePlayers.forEach(player => {
+                        description += "\n• " + player.name
+                    })
+                }
             } catch {
-                message.channel.send("& Failed to query server. &")
+                description += `The server appears to be offline T_T`
             }
+
+            serverEmbed.setDescription(description)
+
+            message.channel.send(serverEmbed)
         }
     }
 
