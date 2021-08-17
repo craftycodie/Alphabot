@@ -2,6 +2,7 @@ import * as dotenv from "dotenv"
 dotenv.config();
 import { connect } from "mongoose"
 
+import IModule from "./modules/IModule";
 import DebugModule from "./modules/DebugModule"
 import TwitterModule from "./modules/TwitterModule"
 import HelpModule from "./modules/HelpModule"
@@ -18,17 +19,23 @@ console.log(`&&& ${packageInfo.name} v${packageInfo.version} &&&`)
 connect(process.env.MONGO_DB_CONNECT_STRING, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(() => { console.log("& Mongoose connected. ")})
 
-export const modules = [
-    new TwitterModule(),
-    new GitHubModule(),
-    new TwitchModule(),
-    new EventsModule(),
-    new HelpModule(),
-    // new MinecraftModule(),
-    new MinecraftServerModule(),
+const availableModules = {
+    Twitter: new TwitterModule(),
+    GitHub: new GitHubModule(),
+    Twitch: new TwitchModule(),
+    Events: new EventsModule(),
+    Minecraft: new MinecraftModule(),
+    MinecraftServer: new MinecraftServerModule(),
+    Help: new HelpModule(),
+    Debug: new DebugModule(),
+}
 
-    new DebugModule(),
-]
+export var modules : IModule[] = [];
+
+process.env.MODULES.split(",").forEach(moduleName => {
+    if (moduleName in availableModules)
+        modules.push(availableModules[moduleName])
+});
 
 modules.forEach(module => {
     module.registerModule()
