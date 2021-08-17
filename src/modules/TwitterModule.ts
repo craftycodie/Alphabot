@@ -1,8 +1,8 @@
+import Twit from "twit"
 import { hasTrustedRole, isOpUser } from "../discord/permissions"
 import events from "../events"
 import IModule from "./IModule"
 import discordBotClient from "../discord/discordBotClient"
-import twitterBotClient from "../twitter/twitterBotClient"
 import { Message, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
 import PendingRetweet from "../schema/PendingRetweet"
 
@@ -10,7 +10,16 @@ const approveEmoji = "👍"
 const rejectEmoji = "👎"
 
 export default class TwitterModule implements IModule {
+    twitterBotClient = null
+
     registerModule() {
+        this.twitterBotClient = new Twit({
+            consumer_key: process.env.TWITTER_CONSUMER_KEY,
+            consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+            access_token: process.env.TWITTER_ACCESS_TOKEN,
+            access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+        })
+
         events.onDiscordReady(this.discordReadyHandler)
         events.onDiscordCommand(this.retweetCommandHandler)
         events.onDiscordCommand(this.tweetCommandHandler)
@@ -21,7 +30,7 @@ export default class TwitterModule implements IModule {
 
     tweetsChannel : TextChannel = null
 
-    private async retweetCommandHandler(message: Message, name: string, args: string[]) {
+    private retweetCommandHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "rt" || name == "retweet") {
             var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
             var guildMember = await guild.members.fetch(message.author.id)
@@ -44,7 +53,7 @@ export default class TwitterModule implements IModule {
             } catch {
                 try {
                     findTweet = true;
-                    var data = await twitterBotClient.get("statuses/user_timeline", { 
+                    var data = await this.twitterBotClient.get("statuses/user_timeline", { 
                         "screen_name": args[0],
                         "exclude_replies": true,
                         "include_rts": false
@@ -59,7 +68,7 @@ export default class TwitterModule implements IModule {
             var tweetID = tweetURL.pathname.substr(tweetURL.pathname.lastIndexOf("/") + 1)
 
             try {
-                var tweet = (await twitterBotClient.get(`statuses/show/${tweetID}`)).data
+                var tweet = (await this.twitterBotClient.get(`statuses/show/${tweetID}`)).data
                 if (tweet.retweeted) {
                     message.channel.send("& This tweet has already been retweeted. &")
                     return
@@ -93,14 +102,14 @@ export default class TwitterModule implements IModule {
         }
     }
 
-    private async tweetCommandHandler(message: Message, name: string, args: string[]) {
+    private tweetCommandHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "tweet") {
             if (!isOpUser(message.author.id)) {
                 message.channel.send("& You must be an operator to use this command. &")
                 return;
             }
 
-            await twitterBotClient.post("statuses/update", { status: args.join(" ") })
+            await this.twitterBotClient.post("statuses/update", { status: args.join(" ") })
         }
     }
 
@@ -138,8 +147,8 @@ export default class TwitterModule implements IModule {
             return
 
         if (reaction.emoji.name == approveEmoji) {
-            twitterBotClient.post('statuses/retweet/:id', { id: pendingRetweet.tweetID });
-            var tweet = (await twitterBotClient.get("statuses/show/:id", { id: pendingRetweet.tweetID })).data
+            this.twitterBotClient.post('statuses/retweet/:id', { id: pendingRetweet.tweetID });
+            var tweet = (await this.twitterBotClient.get("statuses/show/:id", { id: pendingRetweet.tweetID })).data
             this.tweetsChannel.send(`& Retweet from <@${pendingRetweet.discordUserID}> &\nhttps://twitter.com/${tweet.user.screen_name}/status/${pendingRetweet.tweetID}`)
                 .then(message => {
                     discordBotClient.crosspost(message)
@@ -162,8 +171,8 @@ export default class TwitterModule implements IModule {
         }
     }
 
-    private listenToTweets() {
-        var stream = twitterBotClient.stream('statuses/filter', { follow: process.env.TWITTER_USER_ID })
+    private listenToTweets = () => {
+        var stream = this.twitterBotClient.stream('statuses/filter', { follow: process.env.TWITTER_USER_ID })
         console.debug("& Twitter stream connected.")
 
         stream.on('tweet', this.annouceTweet)
