@@ -1,6 +1,6 @@
 {
   "name": "alphabot",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Crafty Patch Discord Bot",
   "main": "index.js",
   "scripts": {

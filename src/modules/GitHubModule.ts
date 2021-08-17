@@ -128,7 +128,7 @@ export default class GitHubModule implements IModule {
                 { 
                     inline: true,
                     name: "Latest Release",
-                    value: latestRelease != null ? latestRelease.name : "No Releases"
+                    value: latestRelease != null ? `[${latestRelease.name}](${latestRelease.html_url})` : "No Releases"
                 },
                 { 
                     inline: true,
