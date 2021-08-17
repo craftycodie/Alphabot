@@ -11,6 +11,7 @@ import TwitchModule from "./modules/TwitchModule"
 import EventsModule from "./modules/EventsModule";
 import MinecraftModule from "./modules/MinecraftModule";
 import MinecraftServerModule from "./modules/MinecraftServerModule";
+import DiceModule from "./modules/DiceModule";
 
 import * as packageInfo from "../package.json"
 
@@ -28,6 +29,7 @@ const availableModules = {
     MinecraftServer: new MinecraftServerModule(),
     Help: new HelpModule(),
     Debug: new DebugModule(),
+    Dice: new DiceModule(),
 }
 
 export var modules : IModule[] = [];
