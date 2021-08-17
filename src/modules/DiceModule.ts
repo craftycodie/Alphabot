@@ -56,6 +56,6 @@ export default class DiceModule implements IModule {
     }
 
     getHelpText() {
-        return "`&roll ((count)d<sides>)` \nRoll (count) dice of <sides>. Count is optional.'"
+        return "`&roll ((count)d<sides>)\nRoll (count) dice of <sides>. Count is optional.`"
     }
 }

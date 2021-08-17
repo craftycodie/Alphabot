@@ -12,6 +12,7 @@ import EventsModule from "./modules/EventsModule";
 import MinecraftModule from "./modules/MinecraftModule";
 import MinecraftServerModule from "./modules/MinecraftServerModule";
 import DiceModule from "./modules/DiceModule";
+import CoinModule from "./modules/CoinModule";
 
 import * as packageInfo from "../package.json"
 
@@ -30,6 +31,7 @@ const availableModules = {
     Help: new HelpModule(),
     Debug: new DebugModule(),
     Dice: new DiceModule(),
+    Coin: new CoinModule(),
 }
 
 export var modules : IModule[] = [];
@@ -41,4 +43,8 @@ process.env.MODULES.split(",").forEach(moduleName => {
 
 modules.forEach(module => {
     module.registerModule()
+    console.log("& Registered " + module.constructor.name)
 });
+
+if (modules.length < 1)
+  console.log("You haven't put any modules in you div")
