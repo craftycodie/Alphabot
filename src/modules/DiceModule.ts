@@ -24,7 +24,7 @@ export default class DiceModule implements IModule {
                 var countParsed = parseInt(count)
                 var sidesParsed = parseInt(sides)
 
-                if (countParsed < 1 || sidesParsed < 1 || isNaN(countParsed) || isNaN(sidesParsed)) {
+                if (countParsed < 1 || sidesParsed < 2 || isNaN(countParsed) || isNaN(sidesParsed)) {
                     message.channel.send("& Invalid arguments. &")
                     return
                 }
