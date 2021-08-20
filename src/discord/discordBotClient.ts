@@ -2,6 +2,8 @@ import { Client, Message } from "discord.js"
 import events from "../events"
 import fetch from "node-fetch"
 
+const commandPrefix = process.env.COMMAND_PREFIX || "&"
+
 class DiscordBotClient extends Client {
     constructor(options) {
         super(options)
@@ -20,8 +22,8 @@ class DiscordBotClient extends Client {
             if (msg.author.id == this.user.id)
                 return
                 
-            if (msg.content.startsWith("&")) {
-                var split = msg.content.substr(1).split(/[ ,]+/)
+            if (msg.content.startsWith(commandPrefix)) {
+                var split = msg.content.substr(commandPrefix.length).split(/[ ,]+/)
                 var commandName = split[0]
                 var args : string[] = []
                 // Crappy arguments parsing.
