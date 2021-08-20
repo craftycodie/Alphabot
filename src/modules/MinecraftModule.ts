@@ -9,6 +9,10 @@ export default class MinecraftModule implements IModule {
         events.onDiscordCommand(this.mcServerHandler)
     }
 
+    unregisterModule() {
+        events.offDiscordCommand(this.mcServerHandler)
+    }
+
     private mcServerHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "mcserver" || name == "mc") {
             if (args.length != 1) {

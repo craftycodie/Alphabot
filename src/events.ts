@@ -22,6 +22,10 @@ class Events {
         this.eventEmitter.on(Event[Event.DISCORD_COMMAND], commandHandler)
     }
 
+    offDiscordCommand(commandHandler:(message: Message, name: string, args: string[]) => void) {
+      this.eventEmitter.off(Event[Event.DISCORD_COMMAND], commandHandler)
+    }
+
 
 
     emitDiscordReady() {
@@ -32,6 +36,10 @@ class Events {
         this.eventEmitter.on(Event[Event.DISCORD_READY], handler)
     }
 
+    offDiscordReady(handler: () => void) {
+        this.eventEmitter.off(Event[Event.DISCORD_READY], handler)
+    }
+
 
     
     emitDiscordReactionAdded(reaction: MessageReaction, user:  User | PartialUser) {
@@ -40,6 +48,10 @@ class Events {
 
     onDiscordReactionAdded(reactionHandler: (reaction: MessageReaction, user: User | PartialUser) => void) {
         this.eventEmitter.on(Event[Event.DISCORD_REACTION_ADDED], reactionHandler)
+    }
+
+    offDiscordReactionAdded(reactionHandler: (reaction: MessageReaction, user: User | PartialUser) => void) {
+        this.eventEmitter.off(Event[Event.DISCORD_REACTION_ADDED], reactionHandler)
     }
 
 }

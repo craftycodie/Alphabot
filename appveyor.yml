@@ -22,6 +22,7 @@ test_script:
 build_script:
   - npm run build
   - 7z a dist.zip ./dist/*
+  - rm -rf dist
 
 artifacts:
   - path: dist.zip
@@ -38,5 +39,3 @@ deploy:
   provider: Webhook
   url: $(DEPLOY_WEBHOOK_URL)
   request_timeout: 5
-
-test: off

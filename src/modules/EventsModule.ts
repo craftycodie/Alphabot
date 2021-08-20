@@ -18,6 +18,12 @@ export default class EventsModule implements IModule {
         events.onDiscordCommand(this.removeEventCommandHandler)
     }
 
+    unregisterModule() {
+        events.offDiscordReady(this.updateEventBoard)
+        events.offDiscordCommand(this.addEventCommandHandler)
+        events.offDiscordCommand(this.removeEventCommandHandler)
+    }
+
     addEventCommandHandler = async (message : Message, name : string, args : string[]) => {
         if (name == "addevent") {
             var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)

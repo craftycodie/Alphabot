@@ -7,31 +7,37 @@ export default class GitHubModule implements IModule {
     githubService = new GitHubService()
 
     registerModule() {
-        events.onDiscordCommand(async (message, name, args) => {
-            if (name == "github") {
-                if (args.length != 1 || args[0].indexOf("/") == -1) {
-                    message.channel.send("& Invalid arguments. &")
-                    return;
-                }
+        events.onDiscordCommand(this.githubCommand)
+    }
 
-                var [username, reponame] = args[0].split("/")
+    unregisterModule() {
+        events.onDiscordCommand(this.githubCommand)
+    }
 
-                try {
-                    if (reponame.indexOf("#") != -1) {
-                        var [reponame, issue] = reponame.split("#")
-
-                        if (issue == "new")
-                            message.channel.send(await this.githubNewIssueEmbed(username, reponame))
-                        else
-                            message.channel.send(await this.githubIssueEmbed(username, reponame, issue))
-                    } else {
-                        message.channel.send(await this.githubRepoEmbed(username, reponame))
-                    }
-                } catch (error) {
-                    message.channel.send(`& ${error.message} &`)
-                }
+    githubCommand = async (message, name, args) => {
+        if (name == "github") {
+            if (args.length != 1 || args[0].indexOf("/") == -1) {
+                message.channel.send("& Invalid arguments. &")
+                return;
             }
-        })
+
+            var [username, reponame] = args[0].split("/")
+
+            try {
+                if (reponame.indexOf("#") != -1) {
+                    var [reponame, issue] = reponame.split("#")
+
+                    if (issue == "new")
+                        message.channel.send(await this.githubNewIssueEmbed(username, reponame))
+                    else
+                        message.channel.send(await this.githubIssueEmbed(username, reponame, issue))
+                } else {
+                    message.channel.send(await this.githubRepoEmbed(username, reponame))
+                }
+            } catch (error) {
+                message.channel.send(`& ${error.message} &`)
+            }
+        }
     }
 
     private async githubIssueEmbed(username, reponame, issueNumber) {

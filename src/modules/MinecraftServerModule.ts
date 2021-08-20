@@ -17,6 +17,13 @@ export default class MinecraftServerModule implements IModule {
         events.onDiscordReactionAdded(this.whitelistApprovalReactionHandler)
     }
 
+    unregisterModule() {
+        events.offDiscordCommand(this.mcServerHandler)
+        events.offDiscordReady(this.discordReadyHandler)
+        events.offDiscordCommand(this.whitelistHandler)
+        events.offDiscordReactionAdded(this.whitelistApprovalReactionHandler)
+    }
+
     private mcServerHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "mc") {
             var description = `**IP** ${process.env.MINECRAFT_IP}${process.env.MINECRAFT_PORT != "25565" ? ":" + server.port : ""}\n\n`
