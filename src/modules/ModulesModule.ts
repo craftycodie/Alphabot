@@ -19,7 +19,7 @@ export default class ModulesModule implements IModule {
         if (name == "modules") {
             var activeModules = ""
             Object.values(availableModules).forEach(module => {
-                activeModules += `\n• ${module.constructor.name} ${modules.includes(module) ? '✅' : '❌'}`
+                activeModules += `\n${modules.includes(module) ? '✅' : '❌'} ${module.constructor.name}`
             })
             message.channel.send(`**${packageInfo.name} v${packageInfo.version}**\nModules:${activeModules}`)
         }
