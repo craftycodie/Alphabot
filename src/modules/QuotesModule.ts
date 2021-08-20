@@ -46,7 +46,8 @@ export default class QuotesModule implements IModule {
                 const quote = new Quote({
                     text,
                     addedBy: message.author.id,
-                    quoteFrom: originalMessage.author.id
+                    quoteFrom: originalMessage.author.id,
+                    containsURL: text.includes("http://") || text.includes("https://")
                 })
 
                 await quote.save()
@@ -80,6 +81,7 @@ export default class QuotesModule implements IModule {
                 const quote = new Quote({
                     text,
                     addedBy: message.author.id,
+                    containsURL: text.includes("http://") || text.includes("https://")
                 })
 
                 await quote.save()

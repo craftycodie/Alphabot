@@ -3,4 +3,5 @@ export default interface Event {
     addedBy: string
     quoteFrom: string
     createdAt: Date
+    containsURL: boolean
 }

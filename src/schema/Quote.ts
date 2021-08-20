@@ -19,6 +19,11 @@ const QuoteSchema = new Schema<QuoteDocument>({
     required: true,
     default: Date.now
   },
+  containsURL: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 })
 
 export interface QuoteDocument extends Document, Quote {}
