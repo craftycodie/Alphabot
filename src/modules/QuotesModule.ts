@@ -28,6 +28,10 @@ export default class QuotesModule implements IModule {
                 const originalMessage = await message.channel.messages.fetch(message.reference.messageID)
                 const text = Util.cleanContent(originalMessage.content, originalMessage)
 
+                if (originalMessage.attachments.size > 0) {
+
+                }
+
                 if (text.length > 2000) {
                     message.channel.send("& This quote is too long. &")
                     return;
@@ -110,7 +114,7 @@ export default class QuotesModule implements IModule {
 
         // Links dont render in embeds.
         if (quote.text.includes("http://") || quote.text.includes("https://")) {
-            channel.send(`${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}`)
+            channel.send(`**Quote**\n${quote.text}`)
             channel.send(quoteEmbed)
             return
         }
