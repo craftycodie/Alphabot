@@ -28,11 +28,13 @@ artifacts:
     name: Alphabot
 
 on_success:
-  - ps: Invoke-RestMethod C:\projects\alphabot\build_scripts\discord-webhook.ps1 -o send.ps1
-  - ps: ./send.ps1 success $env:DISCORD_WEBHOOK_URL
+  - ps: C:\projects\alphabot\build_scripts\discord-webhook.ps1 success $env:DISCORD_WEBHOOK_URL
 on_failure:
-  - ps: Invoke-RestMethod C:\projects\alphabot\build_scripts\discord-webhook.ps1 -o send.ps1
-  - ps: ./send.ps1 failure $env:DISCORD_WEBHOOK_URL
+  - ps: C:\projects\alphabot\build_scripts\discord-webhook.ps1 failure $env:DISCORD_WEBHOOK_URL
 
+deploy:
+  provider: Webhook
+  url: $env:DEPLOY_WEBHOOK_URL
+  request_timeout: 5
 
 test: off
