@@ -27,7 +27,7 @@
       }
     },
     "setupFiles": [
-      "<rootDir>tests/config.ts"
+      "<rootDir>/tests/config.ts"
     ]
   },
   "homepage": "https://github.com/craftycodie/Alphabot#readme",
