@@ -8,6 +8,9 @@ class DiscordBotClient extends Client {
 
         this.on('ready', () => {
             console.log('& Discord client connected.');
+            const op_user = await this.users.fetch(process.env.DISCORD_OP_USER_ID);
+            const dms = await op_user.createDM();
+            dms.send("Restarted.")
             events.emitDiscordReady()
         });
         this.login(process.env.DISCORD_BOT_TOKEN)
