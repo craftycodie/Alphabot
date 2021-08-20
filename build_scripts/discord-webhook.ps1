@@ -77,6 +77,11 @@ $WEBHOOK_DATA="{
     ""url"": ""$URL"",
     ""description"": ""$COMMIT_MESSAGE $CREDITS"",
     ""fields"": [
+    {
+        ""name"": ""Version"",
+        ""value"": ""$BUILD_VERSION"",
+        ""inline"": true
+      },
       {
         ""name"": ""Commit"",
         ""value"": ""[``$($env:APPVEYOR_REPO_COMMIT.substring(0, 7))``](https://github.com/$env:APPVEYOR_REPO_NAME/commit/$env:APPVEYOR_REPO_COMMIT)"",

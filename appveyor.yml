@@ -28,9 +28,9 @@ artifacts:
     name: Alphabot
 
 on_success:
-  - ps: C:\projects\alphabot\build_scripts\discord-webhook.ps1 success $env:DISCORD_WEBHOOK_URL
+  - ps: if ($env:APPVEYOR_REPO_BRANCH -eq "main") {C:\projects\alphabot\build_scripts\discord-webhook.ps1 success $env:DISCORD_WEBHOOK_URL}
 on_failure:
-  - ps: C:\projects\alphabot\build_scripts\discord-webhook.ps1 failure $env:DISCORD_WEBHOOK_URL
+  - ps: if ($env:APPVEYOR_REPO_BRANCH -eq "main") {C:\projects\alphabot\build_scripts\discord-webhook.ps1 failure $env:DISCORD_WEBHOOK_URL}
 
 deploy:
   on:
