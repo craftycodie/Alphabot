@@ -13,6 +13,7 @@ import MinecraftModule from "./modules/MinecraftModule";
 import MinecraftServerModule from "./modules/MinecraftServerModule";
 import DiceModule from "./modules/DiceModule";
 import CoinModule from "./modules/CoinModule";
+import QuotesModule from "./modules/QuotesModule";
 
 import * as packageInfo from "../package.json"
 
@@ -32,6 +33,7 @@ export const availableModules = {
     Modules: new ModulesModule(),
     Dice: new DiceModule(),
     Coin: new CoinModule(),
+    Quotes: new QuotesModule(),
 }
 
 export var modules : IModule[] = [];
