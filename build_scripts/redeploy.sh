@@ -2,7 +2,6 @@ cd "${0%/*}"
 cd ..
 SCREEN_NAME=$(basename "$PWD")
 screen -S $SCREEN_NAME -X quit
-screen -S $SCREEN_NAME
 rm -rf dist
 git pull
 if [ ! -f .env ]
