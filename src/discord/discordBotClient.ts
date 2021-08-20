@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js"
+import { Client, DMChannel, Message } from "discord.js"
 import events from "../events"
 import fetch from "node-fetch"
 
@@ -23,7 +23,7 @@ class DiscordBotClient extends Client {
                 return
                 
             if (msg.content.startsWith(commandPrefix) || msg.channel instanceof DMChannel) {
-                var split = msg.content.substr(msg.content.startsWith(botPrefix) ? botPrefix.length : 0).split(/[ ,]+/)
+                var split = msg.content.substr(msg.content.startsWith(commandPrefix) ? commandPrefix.length : 0).split(/[ ,]+/)
                 var commandName = split[0]
                 var args : string[] = []
                 // Crappy arguments parsing.
