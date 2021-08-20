@@ -8,7 +8,10 @@
       "outDir": "dist",
       "resolveJsonModule": true,
       "plugins": [
-        { "transform": "ts-auto-mock/transformer", "cacheBetweenTests": false }      
+        {
+          "transform": "ts-auto-mock/transformer",
+          "cacheBetweenTests": false
+        }
       ]
     },
     "lib": ["es2015"]
