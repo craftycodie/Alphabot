@@ -49,7 +49,7 @@ export default class QuotesModule implements IModule {
 
                 message.channel.send("& Quote added. &")
             } else {
-                if (args.length < 1) {
+                if (message.content.length < name.length + 2) {
                     message.channel.send("& Please provide a quote. &")
                     return;
                 }
@@ -113,7 +113,7 @@ export default class QuotesModule implements IModule {
             if (quote.text.length > 256) {
                 quoteEmbed.setDescription(`***${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}***`)
             } else {
-                quoteEmbed.setTitle(`*"${quote.text}"*`)
+                quoteEmbed.setTitle(`*${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}*`)
             }
 
             if (quoteFromUser) {
