@@ -22,8 +22,8 @@ class DiscordBotClient extends Client {
             if (msg.author.id == this.user.id)
                 return
                 
-            if (msg.content.startsWith(commandPrefix)) {
-                var split = msg.content.substr(commandPrefix.length).split(/[ ,]+/)
+            if (msg.content.startsWith(commandPrefix) || msg.channel instanceof DMChannel) {
+                var split = msg.content.substr(msg.content.startsWith(botPrefix) ? botPrefix.length : 0).split(/[ ,]+/)
                 var commandName = split[0]
                 var args : string[] = []
                 // Crappy arguments parsing.
