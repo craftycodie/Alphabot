@@ -2,11 +2,11 @@
 # License: MIT
 
 $STATUS=$args[0]
-$WEBHOOK_URL=$args[1]
+$DISCORD_WEBHOOK_URL=$args[1]
 
-if (!$WEBHOOK_URL) {
+if (!$DISCORD_WEBHOOK_URL) {
   Write-Output "WARNING!!"
-  Write-Output "You need to pass the WEBHOOK_URL environment variable as the second argument to this script."
+  Write-Output "You need to pass the DISCORD_WEBHOOK_URL environment variable as the second argument to this script."
   Write-Output "For details & guide, visit: https://github.com/DiscordHooks/appveyor-discord-webhook"
   Exit
 }
@@ -92,7 +92,7 @@ $WEBHOOK_DATA="{
   } ]
 }"
 
-Invoke-RestMethod -Uri "$WEBHOOK_URL" -Method "POST" -UserAgent "AppVeyor-Webhook" `
+Invoke-RestMethod -Uri "$DISCORD_WEBHOOK_URL" -Method "POST" -UserAgent "AppVeyor-Webhook" `
   -ContentType "application/json" -Header @{"X-Author"="k3rn31p4nic#8383"} `
   -Body $WEBHOOK_DATA
 
