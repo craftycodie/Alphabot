@@ -21,6 +21,6 @@ const QuoteSchema = new Schema<QuoteDocument>({
   },
 })
 
-interface QuoteDocument extends Document, Quote {}
+export interface QuoteDocument extends Document, Quote {}
 
 export default model<QuoteDocument>("Quote", QuoteSchema)

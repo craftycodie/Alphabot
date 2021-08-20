@@ -52,7 +52,7 @@ export default class ModulesModule implements IModule {
                     }
                     availableModules[moduleName].registerModule()
                     modules.push(availableModules[moduleName])
-                    message.channel.send(`& Registed ${moduleName} Module. &`)
+                    message.channel.send(`& Registered ${moduleName} Module. &`)
                     break;
                 }
                 case "remove": {
@@ -62,7 +62,7 @@ export default class ModulesModule implements IModule {
                     }
                     availableModules[moduleName].unregisterModule()
                     modules.splice(modules.indexOf(availableModules[moduleName]), 1)
-                    message.channel.send(`& Unregisted ${moduleName} Module. &`)
+                    message.channel.send(`& Unregistered ${moduleName} Module. &`)
                     break;
                 }
             }

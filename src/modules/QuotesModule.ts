@@ -1,8 +1,8 @@
 import events from "../events"
 import IModule from "./IModule"
-import { Message, MessageEmbed, MessageReaction, PartialUser, User } from "discord.js"
+import { Channel, DMChannel, Message, MessageEmbed, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
 import discordBotClient from "../discord/discordBotClient"
-import Quote from "../schema/Quote"
+import Quote, { QuoteDocument } from "../schema/Quote"
 import { Util } from "discord.js"
 
 export default class QuotesModule implements IModule {
@@ -46,8 +46,8 @@ export default class QuotesModule implements IModule {
                 })
 
                 await quote.save()
-
-                message.channel.send("& Quote added. &")
+                message.channel.send("Added Quote")
+                await this.sendQuote(quote, message.channel as TextChannel | DMChannel)
             } else {
                 if (message.content.length < name.length + 2) {
                     message.channel.send("& Please provide a quote. &")
@@ -79,8 +79,8 @@ export default class QuotesModule implements IModule {
                 })
 
                 await quote.save()
-
-                message.channel.send("& Quote added. &")
+                message.channel.send("Added Quote")
+                await this.sendQuote(quote, message.channel as TextChannel | DMChannel)
             }
         }
     }
@@ -88,40 +88,44 @@ export default class QuotesModule implements IModule {
     private quoteCommand = async (message: Message, name: string, args: string[]) => {
         if (name == "q" || name == "quote") {
             const quote = await this.getRandomQuote()
-            if (quote == null) {
-                message.channel.send("& Couldn't find any quotes, try adding one! &")
-                return;
-            }
-
-            var quoteFromUser = null
-            if (quote.quoteFrom != null) {
-                quoteFromUser = await discordBotClient.users.fetch(quote.quoteFrom)
-            }
-            const addedByUser = await discordBotClient.users.fetch(quote.addedBy)
-
-            const quoteEmbed = new MessageEmbed()
-                .setColor('#DD2E44')
-                .setFooter(`Added by ${addedByUser.username} on ${quote.createdAt.toDateString()}.`)
-
-            // Links dont render in embeds.
-            if (quote.text.includes("http://") || quote.text.includes("https://")) {
-                message.channel.send(`${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}`)
-                message.channel.send(quoteEmbed)
-                return
-            }
-
-            if (quote.text.length > 256) {
-                quoteEmbed.setDescription(`***${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}***`)
-            } else {
-                quoteEmbed.setTitle(`*${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}*`)
-            }
-
-            if (quoteFromUser) {
-                quoteEmbed.setAuthor(quoteFromUser.username, quoteFromUser.avatarURL())
-            }
-
-            message.channel.send(quoteEmbed)
+            await this.sendQuote(quote, message.channel as TextChannel | DMChannel)
         }
+    }
+
+    private sendQuote = async (quote: QuoteDocument, channel: TextChannel | DMChannel) => {
+        if (quote == null) {
+            channel.send("& Couldn't find any quotes, try adding one! &")
+            return;
+        }
+
+        var quoteFromUser = null
+        if (quote.quoteFrom != null) {
+            quoteFromUser = await discordBotClient.users.fetch(quote.quoteFrom)
+        }
+        const addedByUser = await discordBotClient.users.fetch(quote.addedBy)
+
+        const quoteEmbed = new MessageEmbed()
+            .setColor('#DD2E44')
+            .setFooter(`Added by ${addedByUser.username} on ${quote.createdAt.toDateString()}.`)
+
+        // Links dont render in embeds.
+        if (quote.text.includes("http://") || quote.text.includes("https://")) {
+            channel.send(`${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}`)
+            channel.send(quoteEmbed)
+            return
+        }
+
+        if (quote.text.length > 256) {
+            quoteEmbed.setDescription(`***${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}***`)
+        } else {
+            quoteEmbed.setTitle(`*${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}*`)
+        }
+
+        if (quoteFromUser) {
+            quoteEmbed.setAuthor(quoteFromUser.username, quoteFromUser.avatarURL())
+        }
+
+        channel.send(quoteEmbed)
     }
 
     getHelpText() {
