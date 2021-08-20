@@ -3,7 +3,7 @@ dotenv.config();
 import { connect } from "mongoose"
 
 import IModule from "./modules/IModule";
-import DebugModule from "./modules/DebugModule"
+import ModulesModule from "./modules/ModulesModule"
 import TwitterModule from "./modules/TwitterModule"
 import HelpModule from "./modules/HelpModule"
 import GitHubModule from "./modules/GitHubModule"
@@ -21,7 +21,7 @@ console.log(`&&& ${packageInfo.name} v${packageInfo.version} &&&`)
 connect(process.env.MONGO_DB_CONNECT_STRING, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(() => { console.log("& Mongoose connected. ")})
 
-const availableModules = {
+export const availableModules = {
     Twitter: new TwitterModule(),
     GitHub: new GitHubModule(),
     Twitch: new TwitchModule(),
@@ -29,7 +29,7 @@ const availableModules = {
     Minecraft: new MinecraftModule(),
     MinecraftServer: new MinecraftServerModule(),
     Help: new HelpModule(),
-    Debug: new DebugModule(),
+    Modules: new ModulesModule(),
     Dice: new DiceModule(),
     Coin: new CoinModule(),
 }

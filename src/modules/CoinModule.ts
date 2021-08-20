@@ -14,7 +14,7 @@ export default class CoinModule implements IModule {
     }
 
     getHelpText() {
-        return "`&flip\nFlip a coin.'"
+        return "`&flip`\nFlip a coin."
     }
 
     flipCommand = (message : Message, name : string, args : string[]) => {

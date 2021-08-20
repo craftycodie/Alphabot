@@ -1,7 +1,7 @@
 {
   "name": "alphabot",
-  "version": "1.4.2",
-  "description": "Crafty Patch Discord Bot",
+  "version": "1.5.0",
+  "description": "Modular Discord Bot",
   "main": "index.js",
   "scripts": {
     "build": "tsc",

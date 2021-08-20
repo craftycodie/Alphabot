@@ -1,7 +1,7 @@
 import events from "../events"
 import IModule from "./IModule"
 import * as packageInfo from "../../package.json"
-import { MessageEmbed } from "discord.js"
+import { Message, MessageEmbed } from "discord.js"
 import discordBotClient from "../discord/discordBotClient"
 import { modules } from ".."
 import os from "os"
@@ -15,7 +15,7 @@ export default class HelpModule implements IModule {
         events.offDiscordCommand(this.helpCommand)
     }
 
-    helpCommand = (message, name) => {
+    helpCommand = async (message: Message, name) => {
         if (name == "help" || name == "?") {
             const helpText = modules.map(module => module.getHelpText()).join("\n\n")
 
@@ -29,7 +29,12 @@ export default class HelpModule implements IModule {
                 .setThumbnail(discordBotClient.user.avatarURL())
                 .setTimestamp()
 
-            message.channel.send(helpEmbed)
+            
+            const DMs = await message.author.createDM()
+            DMs.send(helpEmbed)
+            if (message.channel.type != "dm") {
+                message.channel.send("& Help has been sent to your DMs :) &")
+            }
         }
     }
 
