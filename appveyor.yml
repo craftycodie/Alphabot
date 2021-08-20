@@ -33,6 +33,8 @@ on_failure:
   - ps: C:\projects\alphabot\build_scripts\discord-webhook.ps1 failure $env:DISCORD_WEBHOOK_URL
 
 deploy:
+  on:
+    branch: main
   provider: Webhook
   url: $env:DEPLOY_WEBHOOK_URL
   request_timeout: 5
