@@ -4,7 +4,7 @@ OUTPUT="dist.zip"
 BRANCH="main"
 PROJECT="craftycodie"
 REPO="alphabot"
-ARTIFACT="artifacts/Release/dist.zip"
+ARTIFACT="dist.zip"
 
 # Parse arguments.
 for i in "$@"; do
@@ -37,7 +37,7 @@ fi
 # Get Redirect URL using Bearer Auth
 URL=https://ci.appveyor.com/api/projects/$PROJECT/$REPO/artifacts/$ARTIFACT?branch=$BRANCH
 echo "curl -X GET -I -H 'Authorization: Bearer $AUTHTOKEN' $URL"
-ARRAY=($(curl -X GET -I -H "Authorization: Bearer $AUTHTOKEN" $URL 2>/dev/null | grep Location: | tr " " "\n"))
+ARRAY=($(curl -X GET -I -H "Authorization: Bearer $AUTHTOKEN" $URL 2>/dev/null | grep location: | tr " " "\n"))
 NEWURL=$(echo ${ARRAY[1]} | tr '' ' ')
 
 if [[ -z "$NEWURL" ]]; then
