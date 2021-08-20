@@ -103,8 +103,15 @@ export default class QuotesModule implements IModule {
                 .setColor('#DD2E44')
                 .setFooter(`Added by ${addedByUser.username} on ${quote.createdAt.toDateString()}.`)
 
+            // Links dont render in embeds.
+            if (quote.text.includes("http://") || quote.text.includes("https://")) {
+                message.channel.send(`${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}`)
+                message.channel.send(quoteEmbed)
+                return
+            }
+
             if (quote.text.length > 256) {
-                quoteEmbed.setDescription(`***"${quote.text}"***`)
+                quoteEmbed.setDescription(`***${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}***`)
             } else {
                 quoteEmbed.setTitle(`*"${quote.text}"*`)
             }
