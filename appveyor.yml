@@ -38,5 +38,3 @@ deploy:
   provider: Webhook
   url: $(DEPLOY_WEBHOOK_URL)
   request_timeout: 5
-
-test: off
