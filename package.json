@@ -1,6 +1,6 @@
 {
   "name": "alphabot",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Modular Discord Bot",
   "main": "index.js",
   "scripts": {
