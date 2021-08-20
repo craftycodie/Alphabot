@@ -28,6 +28,15 @@ export default class TwitterModule implements IModule {
         this.listenToTweets()
     }
 
+    unregisterModule() {
+      this.twitterBotClient = null;
+
+      events.offDiscordReady(this.discordReadyHandler)
+      events.offDiscordCommand(this.retweetCommandHandler)
+      events.offDiscordCommand(this.tweetCommandHandler)
+      events.offDiscordReactionAdded(this.retweetApprovalReactionHandler)
+    }
+
     tweetsChannel : TextChannel = null
 
     private retweetCommandHandler = async (message: Message, name: string, args: string[]) => {

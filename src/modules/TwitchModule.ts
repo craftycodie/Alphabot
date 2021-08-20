@@ -13,6 +13,12 @@ export default class TwitchModule implements IModule {
         events.onDiscordCommand(this.removeStreamerCommandHandler)
     }
 
+    unregisterModule() {
+      events.offDiscordReady(this.discordReadyHandler)
+      events.offDiscordCommand(this.addStreamerCommandHandler)
+      events.offDiscordCommand(this.removeStreamerCommandHandler)
+    }
+
     streamsChannel : TextChannel = null
 
     private discordReadyHandler = async () => {
