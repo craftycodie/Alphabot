@@ -36,7 +36,7 @@ deploy:
   on:
     branch: main
   provider: Webhook
-  url: $env:DEPLOY_WEBHOOK_URL
+  url: $(DEPLOY_WEBHOOK_URL)
   request_timeout: 5
 
 test: off
