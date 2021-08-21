@@ -114,6 +114,10 @@ export default class QuotesModule implements IModule {
             .setColor('#DD2E44')
             .setFooter(`Added by ${addedByUser.username} on ${quote.createdAt.toDateString()}.`)
 
+        if (quoteFromUser) {
+            quoteEmbed.setAuthor(quoteFromUser.username, quoteFromUser.avatarURL())
+        }
+
         // Links dont render in embeds.
         if (quote.text.includes("http://") || quote.text.includes("https://")) {
             channel.send(`**Quote**\n${quote.text}`)
@@ -125,10 +129,6 @@ export default class QuotesModule implements IModule {
             quoteEmbed.setDescription(`***${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}***`)
         } else {
             quoteEmbed.setTitle(`*${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}*`)
-        }
-
-        if (quoteFromUser) {
-            quoteEmbed.setAuthor(quoteFromUser.username, quoteFromUser.avatarURL())
         }
 
         channel.send(quoteEmbed)
