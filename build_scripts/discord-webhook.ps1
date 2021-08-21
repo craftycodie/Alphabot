@@ -11,7 +11,7 @@ if (!$DISCORD_WEBHOOK_URL) {
   Exit
 }
 
-Write-Output "[Webhook]: Sending webhook to Discord..."
+Write-Output "[Discord Webhook]: Sending webhook to Discord..."
 
 Switch ($STATUS) {
   "success" {
