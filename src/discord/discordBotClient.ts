@@ -53,7 +53,7 @@ class DiscordBotClient extends Client {
                         }
                     })
                 }
-                events.emitDiscordCommand(msg, commandName, args)
+                events.emitDiscordCommand(msg, commandName.toLowerCase(), args)
             }
         });
     }
