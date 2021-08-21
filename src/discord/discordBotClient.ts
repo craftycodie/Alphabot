@@ -21,9 +21,16 @@ class DiscordBotClient extends Client {
         this.on('message', (msg) => {
             if (msg.author.id == this.user.id)
                 return
+
+            var parsedPrefix = commandPrefix
+
+            // hacky fix for mention prefixes on mobile.
+            if (commandPrefix[2] === "!" && msg.content[1] === "@" && msg.content[2] != "!") {
+              parsedPrefix = commandPrefix.replace("!", "")
+            }
                 
-            if (msg.content.startsWith(commandPrefix) || msg.channel instanceof DMChannel) {
-                var split = msg.content.substr(msg.content.startsWith(commandPrefix) ? commandPrefix.length : 0).split(/[ ,]+/)
+            if (msg.content.startsWith(parsedPrefix) || msg.channel instanceof DMChannel) {
+                var split = msg.content.substr(msg.content.startsWith(parsedPrefix) ? parsedPrefix.length : 0).split(/[ ,]+/)
                 var commandName = split[0]
                 var args : string[] = []
                 // Crappy arguments parsing.

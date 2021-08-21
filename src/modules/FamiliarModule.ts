@@ -98,7 +98,7 @@ export default class FamiliarModule implements IModule {
     }
 
     deleteSavedMessage = async () => {
-        var savedMessage = await SavedMessage.findOne({ name: FamiliarModule.CURRENT_TASK_MESSAGE_NAME}).exec()
+        var savedMessage = await SavedMessage.findOne({ name: FamiliarModule.CURRENT_TASK_MESSAGE_NAME }).exec()
         if (savedMessage != null) 
         {
             try {
@@ -161,7 +161,8 @@ export default class FamiliarModule implements IModule {
         // If the message isn't cached
         if (reaction.message.author == null)
             return
-        // If it's not a reaction to an Alphabot message or Alphabot is reacting, ignore.
+
+            // If it's not a reaction to an Alphabot message or Alphabot is reacting, ignore.
         if (reaction.message.author.id != discordBotClient.user.id || user.id == discordBotClient.user.id)
             return
 

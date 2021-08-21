@@ -7,8 +7,7 @@ const SavedMessageSchema = new Schema<SavedMessageDocument>({
     required: true
   },
   guildID: {
-    type: String,
-    required: true
+    type: String
   },
   channelID: {
     type: String,
