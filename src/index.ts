@@ -15,6 +15,7 @@ import DiceModule from "./modules/DiceModule";
 import CoinModule from "./modules/CoinModule";
 import QuotesModule from "./modules/QuotesModule";
 import FamiliarModule from "./modules/FamiliarModule";
+import ConsoleModule from "./modules/ConsoleModule";
 
 import * as packageInfo from "../package.json"
 
@@ -36,6 +37,7 @@ export const availableModules = {
     Coin: new CoinModule(),
     Quotes: new QuotesModule(),
     Familiar: new FamiliarModule(),
+    Console: new ConsoleModule(),
 }
 
 export var modules : IModule[] = [];
