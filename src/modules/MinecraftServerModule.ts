@@ -1,20 +1,29 @@
 import events from "../events"
 import IModule from "./IModule"
-import { Message, MessageEmbed, MessageReaction, PartialUser, User } from "discord.js"
+import { Message, MessageEmbed, MessageReaction, PartialUser, TextChannel, User } from "discord.js"
 import discordBotClient from "../discord/discordBotClient"
 import WhitelistRequest from "../schema/WhitelistRequest"
 import { Rcon } from "rcon-client"
 import Query from "minecraft-server-util"
+import SavedMessage from "../schema/SavedMessage"
 
 const approveEmoji = "👍"
 const rejectEmoji = "👎"
 
 export default class MinecraftServerModule implements IModule {
+    private static readonly LIST_MESSAGE_NAME = "MINECRAFT_SERVER_LIST"
+
+    private serverListChannel : TextChannel = null
+    private playersOnline : string[] = []
+
+
     registerModule() {
         events.onDiscordCommand(this.mcServerHandler)
         events.onDiscordReady(this.discordReadyHandler)
         events.onDiscordCommand(this.whitelistHandler)
         events.onDiscordReactionAdded(this.whitelistApprovalReactionHandler)
+
+        this.startServerList()
     }
 
     unregisterModule() {
@@ -22,8 +31,96 @@ export default class MinecraftServerModule implements IModule {
         events.offDiscordReady(this.discordReadyHandler)
         events.offDiscordCommand(this.whitelistHandler)
         events.offDiscordReactionAdded(this.whitelistApprovalReactionHandler)
+
+        this.stopServerList()
     }
 
+    private timeout: NodeJS.Timeout = null;
+
+    private startServerList = () => {
+        this.timeout = setTimeout(this.doServerList, 10000);
+    }
+
+    private stopServerList = () => {
+        clearTimeout(this.timeout);
+        this.timeout = null;
+    }
+
+    private doServerList = async () => {
+        try {
+            const rcon = await Rcon.connect({
+                host: process.env.MINECRAFT_RCON_IP, port: parseInt(process.env.MINECRAFT_RCON_PORT), password: process.env.MINECRAFT_RCON_PASSWORD
+            })
+            var list = await rcon.send("list");
+            this.playersOnline = [];
+            list = list.substr(list.indexOf(":") + 2);
+            if (list.length > 0)
+                this.playersOnline = list.split(", ");
+
+            (await this.getSavedMessage()).edit(await this.getServerListMessage())
+        } catch (error) {
+            
+        }
+        this.timeout = setTimeout(this.doServerList, 10000);
+    }
+
+
+    getServerListMessage = async () => {
+        var description = ""
+
+        try {
+            var server = await Query.status(process.env.MINECRAFT_IP, { port: parseInt(process.env.MINECRAFT_PORT) })
+
+            description = `**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+
+            this.playersOnline.forEach(player => {
+                description += "\n• " + player
+            })
+
+            if (this.playersOnline.length < 1)
+                description += "\nNo one is playing :("
+        } catch {
+            description = `The server appears to be offline T_T`
+        }
+
+        return description
+    }
+
+    getSavedMessage = async (): Promise<Message> => {
+        this.serverListChannel = await discordBotClient.channels.fetch(process.env.DISCORD_MINECRAFT_SERVER_LIST_CHANNEL_ID) as TextChannel
+
+        var savedMessage = await SavedMessage.findOne({ name: MinecraftServerModule.LIST_MESSAGE_NAME }).exec()
+        if (savedMessage == null) {
+            var message = await this.serverListChannel.send(await this.getServerListMessage())
+
+            await new SavedMessage({
+                name: MinecraftServerModule.LIST_MESSAGE_NAME,
+                guildID: message.guild.id,
+                channelID: message.channel.id,
+                messageID: message.id
+            }).save()
+
+            return message
+        } else {
+            try {
+                return await this.serverListChannel.messages.fetch(savedMessage.messageID)
+            } catch (error) {
+                savedMessage.delete()
+
+                var message = await this.serverListChannel.send(await this.getServerListMessage())
+
+                await new SavedMessage({
+                    name: MinecraftServerModule.LIST_MESSAGE_NAME,
+                    guildID: message.guild.id,
+                    channelID: message.channel.id,
+                    messageID: message.id
+                }).save()
+    
+                return message
+            }
+        }
+    }
+    
     private mcServerHandler = async (message: Message, name: string, args: string[]) => {
         if (name == "mc") {
             var description = `**IP** ${process.env.MINECRAFT_IP}${process.env.MINECRAFT_PORT != "25565" ? ":" + server.port : ""}\n\n`
@@ -49,13 +146,13 @@ export default class MinecraftServerModule implements IModule {
                         }
                     ])
 
-                description += `**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+                // description += `**Players** (${server.onlinePlayers}/${server.maxPlayers})`
 
-                if (server.samplePlayers) {
-                    server.samplePlayers.forEach(player => {
-                        description += "\n• " + player.name
-                    })
-                }
+                // if (server.samplePlayers) {
+                //     server.samplePlayers.forEach(player => {
+                //         description += "\n• " + player.name
+                //     })
+                // }
             } catch {
                 description += `The server appears to be offline T_T`
             }
