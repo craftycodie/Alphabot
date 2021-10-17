@@ -38,7 +38,7 @@ export default class MinecraftServerModule implements IModule {
     private timeout: NodeJS.Timeout = null;
 
     private startServerList = () => {
-        this.timeout = setTimeout(this.doServerList, 10000);
+        this.doServerList()
     }
 
     private stopServerList = () => {
@@ -61,7 +61,7 @@ export default class MinecraftServerModule implements IModule {
         } catch (error) {
             
         }
-        this.timeout = setTimeout(this.doServerList, 10000);
+        this.timeout = setTimeout(this.doServerList, 30000);
     }
 
 
