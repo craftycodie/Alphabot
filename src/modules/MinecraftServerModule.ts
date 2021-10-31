@@ -107,6 +107,7 @@ export default class MinecraftServerModule implements IModule {
         var savedMessage = await SavedMessage.findOne({ name: MinecraftServerModule.LIST_MESSAGE_NAME }).exec()
         if (savedMessage == null) {
             var message = await this.serverListChannel.send(await this.getServerListMessage())
+            await this.serverListChannel.send("stinky!")
 
             await new SavedMessage({
                 name: MinecraftServerModule.LIST_MESSAGE_NAME,
@@ -123,6 +124,7 @@ export default class MinecraftServerModule implements IModule {
                 savedMessage.delete()
 
                 var message = await this.serverListChannel.send(await this.getServerListMessage())
+                await this.serverListChannel.send("smelly!")
 
                 await new SavedMessage({
                     name: MinecraftServerModule.LIST_MESSAGE_NAME,
@@ -183,8 +185,8 @@ export default class MinecraftServerModule implements IModule {
         var opUser = await discordBotClient.users.fetch(process.env.DISCORD_OP_USER_ID)
         var dmChannel = await opUser.createDM();
         
-        whitelistRequests.forEach(pendingRetweet => {
-            dmChannel.messages.fetch(pendingRetweet.approvalMessageID)
+        whitelistRequests.forEach(whitelistRequest => {
+            dmChannel.messages.fetch(whitelistRequest.approvalMessageID)
         })
     }
 
