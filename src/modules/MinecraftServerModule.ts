@@ -66,24 +66,36 @@ export default class MinecraftServerModule implements IModule {
 
 
     getServerListMessage = async () => {
-        var description = ""
-
         try {
             var server = await Query.status(process.env.MINECRAFT_IP, { port: parseInt(process.env.MINECRAFT_PORT) })
 
-            description = `**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+            var description = `${process.env.MINECRAFT_IP}` + (server.port != 25565 ? `:${server.port}` : '') + `\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
 
             this.playersOnline.forEach(player => {
                 description += "\n• " + player
-            })
+            });
 
             if (this.playersOnline.length < 1)
                 description += "\nNo one is playing :("
-        } catch {
-            description = `The server appears to be offline T_T`
-        }
 
-        return description
+            const serverEmbed = new MessageEmbed()
+                .setColor('#34aa2f')
+                .setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
+                .setDescription(description)
+                .addFields([
+                    {
+                        name: "Version",
+                        value: server.version,
+                        inline: true
+                    }
+                ])
+                .setFooter("Minecraft", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-96x96.png")
+                .setTimestamp()
+
+            return serverEmbed
+        } catch {
+            return `The server appears to be offline T_T`
+        }
     }
 
     getSavedMessage = async (): Promise<Message> => {
