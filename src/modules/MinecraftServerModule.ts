@@ -69,7 +69,9 @@ export default class MinecraftServerModule implements IModule {
         try {
             var server = await Query.status(process.env.MINECRAFT_IP, { port: parseInt(process.env.MINECRAFT_PORT) })
 
-            var description = `${process.env.MINECRAFT_IP}` + (server.port != 25565 ? `:${server.port}` : '') + `\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+            var description = `**IP:** ${process.env.MINECRAFT_IP}` + (server.port != 25565 ? `:${server.port}` : '') + `\n\n**Players** (${server.onlinePlayers}/${server.maxPlayers})`
+
+            var guild = await discordBotClient.guilds.fetch(process.env.DISCORD_GUILD_ID)
 
             this.playersOnline.forEach(player => {
                 description += "\n• " + player
@@ -80,6 +82,7 @@ export default class MinecraftServerModule implements IModule {
 
             const serverEmbed = new MessageEmbed()
                 .setColor('#34aa2f')
+                .setThumbnail(guild.iconURL())
                 .setTitle(server.description.toString().replace(/\u00A7[0-9A-FK-OR]/ig,''))
                 .setDescription(description)
                 .addFields([
