@@ -13,7 +13,7 @@ const rejectEmoji = "👎"
 export default class MinecraftServerModule implements IModule {
     private static readonly LIST_MESSAGE_NAME = "MINECRAFT_SERVER_LIST"
 
-    private serverListChannel : TextChannel = null
+    private serverListChannel? : TextChannel = null
     private playersOnline : string[] = []
 
 
@@ -22,8 +22,6 @@ export default class MinecraftServerModule implements IModule {
         events.onDiscordReady(this.discordReadyHandler)
         events.onDiscordCommand(this.whitelistHandler)
         events.onDiscordReactionAdded(this.whitelistApprovalReactionHandler)
-
-        this.startServerList()
     }
 
     unregisterModule() {
@@ -186,6 +184,8 @@ export default class MinecraftServerModule implements IModule {
         whitelistRequests.forEach(whitelistRequest => {
             dmChannel.messages.fetch(whitelistRequest.approvalMessageID)
         })
+
+        this.startServerList()
     }
 
     private whitelistHandler = async (message: Message, name: string, args: string[]) => {
