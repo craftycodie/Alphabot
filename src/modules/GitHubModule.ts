@@ -56,6 +56,9 @@ export default class GitHubModule implements IModule {
                 // ignore.
             }
         
+            const exeDownloads = latestRelease.assets.filter(asset => asset.name.endsWith('.exe'))[0].download_count;
+            const jarDownloads = latestRelease.assets.filter(asset => asset.name.endsWith('.jar'))[0].download_count
+
             const repoEmbed = new MessageEmbed()
                 .setColor('#171515')
                 .setTitle(repo.name + ' ' + latestRelease.name)
@@ -63,9 +66,27 @@ export default class GitHubModule implements IModule {
                 .setAuthor(repo.owner.login, repo.owner.avatar_url)
                 .setThumbnail("https://raw.githubusercontent.com/craftycodie/MineOnline/649d73f9f40967e958815f25ba5f79c911ec20d2/res/img/favicon.png")
                 .setTimestamp(new Date(repo.updated_at).getTime())
-                .setDescription("**Downloads:**\n.exe " + latestRelease.assets.filter(asset => asset.name.endsWith('.exe'))[0].download_count + '\n.jar ' + latestRelease.assets.filter(asset => asset.name.endsWith('.jar'))[0].download_count + '\n')
+                .setDescription("**Downloads:**")
                 .setFooter("GitHub", "https://github.githubassets.com/favicons/favicon-dark.png")
     
+                .addFields([
+                    { 
+                        inline: true,
+                        name: ".exe",
+                        value: exeDownloads
+                    },
+                    { 
+                        inline: true,
+                        name: ".jar",
+                        value: jarDownloads
+                    },
+                    { 
+                        inline: true,
+                        name: "Total",
+                        value: exeDownloads + jarDownloads
+                    }
+                ])
+
                 .addFields([
                     { 
                         inline: true,
