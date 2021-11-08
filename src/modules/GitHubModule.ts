@@ -8,10 +8,12 @@ export default class GitHubModule implements IModule {
 
     registerModule() {
         events.onDiscordCommand(this.githubCommand)
+        events.onDiscordCommand(this.mineonlineCommand)
     }
 
     unregisterModule() {
-        events.onDiscordCommand(this.githubCommand)
+        events.offDiscordCommand(this.githubCommand)
+        events.offDiscordCommand(this.mineonlineCommand)
     }
 
     githubCommand = async (message, name, args) => {
@@ -37,6 +39,52 @@ export default class GitHubModule implements IModule {
             } catch (error) {
                 message.channel.send(`& ${error.message} &`)
             }
+        }
+    }
+
+    mineonlineCommand = async (message, name, args) => {
+        if (name == "mo") {
+
+            var repo = null;
+            var latestRelease = null;
+    
+            repo = await this.githubService.getRepo("craftycodie", "mineonline")
+    
+            try {
+                latestRelease = await this.githubService.getLatestRelease("craftycodie", "mineonline")
+            } catch {
+                // ignore.
+            }
+        
+            const repoEmbed = new MessageEmbed()
+                .setColor('#171515')
+                .setTitle(repo.name + ' ' + latestRelease.name)
+                .setURL(repo.html_url)
+                .setAuthor(repo.owner.login, repo.owner.avatar_url)
+                .setThumbnail("https://raw.githubusercontent.com/craftycodie/MineOnline/649d73f9f40967e958815f25ba5f79c911ec20d2/res/img/favicon.png")
+                .setTimestamp(new Date(repo.updated_at).getTime())
+                .setDescription("**Downloads:**\n.exe " + latestRelease.assets.filter(asset => asset.name.endsWith('.exe'))[0].download_count + '\n.jar ' + latestRelease.assets.filter(asset => asset.name.endsWith('.jar'))[0].download_count + '\n')
+                .setFooter("GitHub", "https://github.githubassets.com/favicons/favicon-dark.png")
+    
+                .addFields([
+                    { 
+                        inline: true,
+                        name: "Stars",
+                        value: repo.stargazers_count
+                    },
+                    { 
+                        inline: true,
+                        name: "Forks",
+                        value: repo.forks_count
+                    },
+                    { 
+                        inline: true,
+                        name: "Issues",
+                        value: repo.open_issues_count
+                    }
+                ])
+    
+            message.channel.send(repoEmbed)
         }
     }
 
