@@ -9,11 +9,13 @@ export default class GitHubModule implements IModule {
     registerModule() {
         events.onDiscordCommand(this.githubCommand)
         events.onDiscordCommand(this.mineonlineCommand)
+        events.onDiscordCommand(this.spritecasterCommand)
     }
 
     unregisterModule() {
         events.offDiscordCommand(this.githubCommand)
         events.offDiscordCommand(this.mineonlineCommand)
+        events.offDiscordCommand(this.spritecasterCommand)
     }
 
     githubCommand = async (message, name, args) => {
