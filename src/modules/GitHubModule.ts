@@ -42,6 +42,55 @@ export default class GitHubModule implements IModule {
         }
     }
 
+    spritecasterCommand = async (message, name, args) => {
+        if (name == "sc") {
+
+            var repo = null;
+            var latestRelease = null;
+    
+            repo = await this.githubService.getRepo("craftycodie", "spritecaster")
+    
+            try {
+                latestRelease = await this.githubService.getLatestRelease("craftycodie", "spritecaster")
+            } catch {
+                // ignore.
+            }
+        
+            const exeDownloads = latestRelease.assets.filter(asset => asset.name.endsWith('.exe'))[0].download_count;
+            const jarDownloads = latestRelease.assets.filter(asset => asset.name.endsWith('.jar'))[0].download_count
+
+            const repoEmbed = new MessageEmbed()
+                .setColor('#171515')
+                .setTitle(repo.name + ' ' + latestRelease.name)
+                .setURL(repo.html_url)
+                .setAuthor(repo.owner.login, repo.owner.avatar_url)
+                .setThumbnail("https://raw.githubusercontent.com/craftycodie/SpriteCaster/main/icon.png")
+                .setTimestamp(new Date(repo.updated_at).getTime())
+                .setDescription("**Downloads:**")
+                .setFooter("GitHub", "https://github.githubassets.com/favicons/favicon-dark.png")
+    
+                .addFields([
+                    { 
+                        inline: true,
+                        name: ".exe",
+                        value: exeDownloads
+                    },
+                    { 
+                        inline: true,
+                        name: ".jar",
+                        value: jarDownloads
+                    },
+                    { 
+                        inline: true,
+                        name: "Total",
+                        value: exeDownloads + jarDownloads
+                    }
+                ])
+
+            message.channel.send(repoEmbed)
+        }
+    }
+
     mineonlineCommand = async (message, name, args) => {
         if (name == "mo") {
 
@@ -84,24 +133,6 @@ export default class GitHubModule implements IModule {
                         inline: true,
                         name: "Total",
                         value: exeDownloads + jarDownloads
-                    }
-                ])
-
-                .addFields([
-                    { 
-                        inline: true,
-                        name: "Stars",
-                        value: repo.stargazers_count
-                    },
-                    { 
-                        inline: true,
-                        name: "Forks",
-                        value: repo.forks_count
-                    },
-                    { 
-                        inline: true,
-                        name: "Issues",
-                        value: repo.open_issues_count
                     }
                 ])
     
