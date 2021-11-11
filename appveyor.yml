@@ -11,8 +11,9 @@ install:
   # install modules
   - npm install
 
-cache:
-  - C:\projects\alphabot\node_modules
+# This made builds slightly slower 🤔
+#cache:
+#  - C:\projects\alphabot\node_modules
 
 # Post-install test scripts.
 test_script:
