@@ -55,10 +55,12 @@ export default class MinecraftServerModule implements IModule {
             if (list.length > 0)
                 this.playersOnline = list.split(", ");
 
-            (await this.getSavedMessage()).edit(await this.getServerListMessage())
         } catch (error) {
             
         }
+
+        (await this.getSavedMessage()).edit(await this.getServerListMessage())
+
         this.timeout = setTimeout(this.doServerList, 30000);
     }
 
