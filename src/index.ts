@@ -28,7 +28,6 @@ export const availableModules = {
     Twitter: new TwitterModule(),
     GitHub: new GitHubModule(),
     Twitch: new TwitchModule(),
-    Events: new EventsModule(),
     Minecraft: new MinecraftModule(),
     MinecraftServer: new MinecraftServerModule(),
     Help: new HelpModule(),
