@@ -8,7 +8,6 @@ import TwitterModule from "./modules/TwitterModule"
 import HelpModule from "./modules/HelpModule"
 import GitHubModule from "./modules/GitHubModule"
 import TwitchModule from "./modules/TwitchModule"
-import EventsModule from "./modules/EventsModule";
 import MinecraftModule from "./modules/MinecraftModule";
 import MinecraftServerModule from "./modules/MinecraftServerModule";
 import DiceModule from "./modules/DiceModule";
