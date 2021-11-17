@@ -4,17 +4,11 @@ import { connect } from "mongoose"
 
 import IModule from "./modules/IModule";
 import ModulesModule from "./modules/ModulesModule"
-import TwitterModule from "./modules/TwitterModule"
 import HelpModule from "./modules/HelpModule"
-import GitHubModule from "./modules/GitHubModule"
 import TwitchModule from "./modules/TwitchModule"
-import MinecraftModule from "./modules/MinecraftModule";
-import MinecraftServerModule from "./modules/MinecraftServerModule";
 import DiceModule from "./modules/DiceModule";
 import CoinModule from "./modules/CoinModule";
 import QuotesModule from "./modules/QuotesModule";
-import FamiliarModule from "./modules/FamiliarModule";
-import ConsoleModule from "./modules/ConsoleModule";
 
 import * as packageInfo from "../package.json"
 
@@ -24,18 +18,12 @@ connect(process.env.MONGO_DB_CONNECT_STRING, { useUnifiedTopology: true, useNewU
     .then(() => { console.log("& Mongoose connected. ")})
 
 export const availableModules = {
-    Twitter: new TwitterModule(),
-    GitHub: new GitHubModule(),
     Twitch: new TwitchModule(),
-    Minecraft: new MinecraftModule(),
-    MinecraftServer: new MinecraftServerModule(),
     Help: new HelpModule(),
     Modules: new ModulesModule(),
     Dice: new DiceModule(),
     Coin: new CoinModule(),
     Quotes: new QuotesModule(),
-    Familiar: new FamiliarModule(),
-    Console: new ConsoleModule(),
 }
 
 export var modules : IModule[] = [];
