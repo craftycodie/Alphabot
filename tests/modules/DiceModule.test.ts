@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, TextChannel } from 'discord.js';
 import { createMock } from "ts-auto-mock";
 
 import events from "../../src/events";
@@ -19,7 +19,7 @@ test('Rolling a dice returns a random number.', () => {
         return 5;
     }
 
-    const messageMock: Message = createMock<Message>();
+    const messageMock: Message = createMock<Message>({channel: createMock<TextChannel>()});
     messageMock.channel.send = jest.fn().mockImplementation()
 
     events.emitDiscordCommand(messageMock, "roll", ["1d6"])
@@ -33,7 +33,7 @@ test('Rolling a 69 returns nice.', () => {
         return 69;
     }
 
-    const messageMock: Message = createMock<Message>();
+    const messageMock: Message = createMock<Message>({channel: createMock<TextChannel>()});
     messageMock.channel.send = jest.fn().mockImplementation()
 
     events.emitDiscordCommand(messageMock, "roll", ["1d69"])
@@ -45,7 +45,7 @@ test('Rolling a 69 returns nice.', () => {
 test('Rolling two dice returns two results.', () => {
     sut.getRandomIntInclusive = jest.fn().mockReturnValueOnce(2).mockReturnValueOnce(6)
 
-    const messageMock: Message = createMock<Message>();
+    const messageMock: Message = createMock<Message>({channel: createMock<TextChannel>()});
     messageMock.channel.send = jest.fn().mockImplementation()
 
     events.emitDiscordCommand(messageMock, "roll", ["2d6"])

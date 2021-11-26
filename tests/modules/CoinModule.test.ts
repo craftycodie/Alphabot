@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Channel, Message, TextChannel } from 'discord.js';
 import { createMock } from "ts-auto-mock";
 
 import events from "../../src/events";
@@ -19,7 +19,8 @@ test('Flipping a coin returns Lucky or Unlucky.', () => {
         return 1;
     }
 
-    const messageMock: Message = createMock<Message>();
+    const messageMock: Message = createMock<Message>({channel: createMock<TextChannel>()});
+    
     messageMock.channel.send = jest.fn().mockImplementation()
 
     events.emitDiscordCommand(messageMock, "flip", [])
