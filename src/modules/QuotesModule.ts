@@ -25,8 +25,8 @@ export default class QuotesModule implements IModule {
     private quoteAddCommand = async (message: Message, name: string, args: string[]) => {
         if (name == "addquote" || name == "aq") {
             if (message.reference) {
-                const originalMessage = await message.channel.messages.fetch(message.reference.messageID)
-                const text = Util.cleanContent(originalMessage.content, originalMessage)
+                const originalMessage = await message.channel.messages.fetch(message.reference.messageId)
+                const text = Util.cleanContent(originalMessage.content, originalMessage.channel)
 
                 if (originalMessage.attachments.size > 0) {
 
@@ -59,7 +59,7 @@ export default class QuotesModule implements IModule {
                     return;
                 }
 
-                var text = Util.cleanContent(message.content, message)
+                var text = Util.cleanContent(message.content, message.channel)
                 text = text.substring(name.length + 2)
 
                 if (text.length < 1) {
@@ -121,7 +121,7 @@ export default class QuotesModule implements IModule {
         // Links dont render in embeds.
         if (quote.text.includes("http://") || quote.text.includes("https://")) {
             channel.send(`**Quote**\n${quote.text}`)
-            channel.send(quoteEmbed)
+            channel.send({ embeds: [quoteEmbed] })
             return
         }
 
@@ -131,7 +131,7 @@ export default class QuotesModule implements IModule {
             quoteEmbed.setTitle(`*${quoteFromUser != null ? '"' : ''}${quote.text}${quoteFromUser != null ? '"' : ''}*`)
         }
 
-        channel.send(quoteEmbed)
+        channel.send({ embeds: [quoteEmbed] })
     }
 
     getHelpText() {

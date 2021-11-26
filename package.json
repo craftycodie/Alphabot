@@ -1,6 +1,6 @@
 {
   "name": "alphabot",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Modular Discord Bot",
   "main": "index.js",
   "scripts": {
@@ -35,8 +35,9 @@
   },
   "homepage": "https://github.com/craftycodie/Alphabot#readme",
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "^13.3.1",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "minecraft-server-util": "^3.4.4",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",

@@ -104,7 +104,7 @@ export default class GitHubService {
 
     private getRateLimit = async (res) => {
         if (res.status == 403 && res.statusText == "rate limit exceeded") {
-            var res = await fetch(
+            var rateLimitRes = await fetch(
                 `https://api.github.com/rate_limit`,
                 {
                     method: 'GET',
@@ -114,7 +114,7 @@ export default class GitHubService {
                 },
             )
             
-            this.rateLimitReset = (await res.json()).resources.core.reset
+            this.rateLimitReset = (await rateLimitRes.json()).resources.core.reset
 
             await this.checkRateLimit()
         }

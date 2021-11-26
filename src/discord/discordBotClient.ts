@@ -1,4 +1,4 @@
-import { Client, DMChannel, Message } from "discord.js"
+import { Client, DMChannel, Intents, Message } from "discord.js"
 import events from "../events"
 import fetch from "node-fetch"
 
@@ -17,6 +17,10 @@ class DiscordBotClient extends Client {
         this.on('messageReactionAdd', async (reaction, user) => {
             events.emitDiscordReactionAdded(reaction, user)
         });
+
+        this.on('interactionCreate', async (interaction) => {
+            events.emitDiscordInteraction(interaction)
+        })
         
         this.on('message', (msg) => {
             if (msg.author.id == this.user.id)
@@ -71,4 +75,7 @@ class DiscordBotClient extends Client {
     }
 }
 
-export default new DiscordBotClient({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
+export default new DiscordBotClient({ 
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION'] ,
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES],
+})

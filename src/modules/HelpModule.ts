@@ -31,8 +31,8 @@ export default class HelpModule implements IModule {
 
             
             const DMs = await message.author.createDM()
-            DMs.send(helpEmbed)
-            if (message.channel.type != "dm") {
+            DMs.send({ embeds: [helpEmbed] })
+            if (message.channel.type != "DM") {
                 message.channel.send("& Help has been sent to your DMs :) &")
             }
         }

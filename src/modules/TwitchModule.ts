@@ -118,7 +118,7 @@ export default class TwitchModule implements IModule {
         if (stream.game != null && stream.game != "")
             embed.addField("Game", stream.game)
 
-        this.streamsChannel.send(embed)
+        this.streamsChannel.send({ embeds: [embed] })
             .then(message => {
                 discordBotClient.crosspost(message)
                     .then(res => res.json())
