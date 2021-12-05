@@ -116,9 +116,9 @@ export default class UpdaterModule implements IModule {
 
         var text = message.content;
         if (text.length > 256) {
-            quoteEmbed.setDescription(`***"${text}" - ${discordBotClient.user.username}***`)
+            quoteEmbed.setDescription(`***"${text}"***`)
         } else {
-            quoteEmbed.setTitle(`*"${text}" - ${discordBotClient.user.username}*`)
+            quoteEmbed.setTitle(`*"${text}"*`)
         }
 
         await message.reply({ content: 'You lend your voice to a God from a different realm.', embeds: [quoteEmbed], components: [row, row2] });
