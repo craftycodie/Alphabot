@@ -12,6 +12,7 @@ import QuotesModule from "./modules/QuotesModule";
 
 import * as packageInfo from "../package.json"
 import UpdaterModule from "./modules/UpdaterModule";
+import CardModule from "./modules/CardModule";
 
 console.log(`&&& ${packageInfo.name} v${packageInfo.version} &&&`)
 
@@ -26,6 +27,7 @@ export const availableModules = {
     Coin: new CoinModule(),
     Quotes: new QuotesModule(),
     Updater: new UpdaterModule(),
+    Card: new CardModule()
 }
 
 export var modules : IModule[] = [];
