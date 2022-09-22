@@ -7,4 +7,4 @@ screen -S $SCREEN_NAME -X quit
 git pull
 npm i
 npm run build
-bash ./build_scripts/start.sh
+# bash ./build_scripts/start.sh
